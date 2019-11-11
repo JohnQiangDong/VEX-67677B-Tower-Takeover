@@ -115,7 +115,7 @@ void usercontrol(void) {
       hand2.setMaxTorque(1.5, currentUnits::amp);
       hand1.spin(vex::directionType::fwd, handmove, vex::velocityUnits::pct);
       hand2.spin(vex::directionType::rev, handmove, vex::velocityUnits::pct);
-    } else if (controller1.ButtonR2.pressing()) {
+    } else if (btn_r2) {
       hand1.setMaxTorque(1.5, currentUnits::amp);
       hand2.setMaxTorque(1.5, currentUnits::amp);
       hand1.spin(vex::directionType::rev, handmove, vex::velocityUnits::pct);
