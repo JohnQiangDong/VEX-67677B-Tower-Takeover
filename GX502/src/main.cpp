@@ -110,7 +110,7 @@ void usercontrol(void) {
     else{
       move(c_3, c_1);
     }
-    if (controller1.ButtonR1.pressing()) {
+    if (btn_r1) {
       hand1.setMaxTorque(1.5, currentUnits::amp);
       hand2.setMaxTorque(1.5, currentUnits::amp);
       hand1.spin(vex::directionType::fwd, handmove, vex::velocityUnits::pct);
