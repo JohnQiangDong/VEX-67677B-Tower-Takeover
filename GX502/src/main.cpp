@@ -11,6 +11,7 @@
 
 #include "automove.h"
 #include "move.h"
+#include "functions.h"
 #include "status.h"
 
 #include "math.h"
