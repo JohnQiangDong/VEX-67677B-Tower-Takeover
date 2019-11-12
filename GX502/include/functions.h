@@ -51,3 +51,14 @@ void robot_stop(bool stoptype) {
     right_2.stop(vex::brakeType::hold);
   }
 }
+//set value of current 
+void hand_setq(double tq){
+hand1.setMaxTorque(tq, currentUnits::amp);
+hand2.setMaxTorque(tq, currentUnits::amp);
+}
+void push_setq(double tq){
+  push.setMaxTorque(tq, currentUnits::amp);
+}
+void arm_setq(double tq){
+  arm.setMaxTorque(tq, currentUnits::amp);
+}
