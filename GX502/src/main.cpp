@@ -36,7 +36,8 @@ vex::competition Competition;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-void pre_auton(void) {
+void pre_auton(void)
+{
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -51,8 +52,9 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous() {
-  
+void autonomous()
+{
+
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
@@ -68,21 +70,33 @@ void autonomous() {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) {
-  // User control code here, inside the loop
-  double handmove = 81;
-  double dangerous = 0;
+void Spin(vex::motor motor, vex::directionType dt, int pct, int mt)
+{
+  motor.setMaxTorque(mt, currentUnits::amp);
+  motor.spin(dt, pct, vex::velocityUnits::pct);
+}
+
+void Stop(vex::motor motor, brakeType bt, int mt)
+{
+  motor.setMaxTorque(mt, currentUnits::amp);
+  motor.stop(bt);
+}
+
+void usercontrol(void)
+{
+  double collector_spd = 81;
+  int smove_spd = 2800;
+  double push_err = 0;
   bool push_flag = false;
-  int sml_move = 2800;
-  // double angle = 0;
-  // int PPush = 0;
+  int c_1, c_3, btn_l1, btn_l2, btn_r1, btn_r2, btn_x,
+      btn_a, btn_y, btn_b, btn_up, btn_down, btn_right,
+      btn_left;
+
   push.resetRotation();
 
-  int c_1, c_3, btn_l1, btn_l2, btn_r1, btn_r2, btn_x, 
-  btn_a, btn_y, btn_b, btn_up, btn_down, btn_right,
-  btn_left;
-
-  while (true) {
+  // User control code here, inside the loop
+  while (true)
+  {
     // reading.
     c_1 = controller1.Axis1.value();
     c_3 = controller1.Axis3.value();
@@ -98,45 +112,71 @@ void usercontrol(void) {
     btn_down = controller1.ButtonDown.pressing();
     btn_right = controller1.ButtonRight.pressing();
     btn_left = controller1.ButtonLeft.pressing();
-    Brain.Screen.printAt(10,10,"dangerous is %5f",dangerous);
-    if(btn_up){
-      mmove(sml_move,sml_move);
+
+    // moving.
+    if (btn_up)
+    {
+      mmove(smove_spd, smove_spd);
     }
-    else if(btn_right){
-      mmove(-1.5*sml_move,1.5*sml_move);
+    else if (btn_right)
+    {
+      mmove(-1.5 * smove_spd, 1.5 * smove_spd);
     }
-    else if(btn_left){
-      mmove(1.5*sml_move,-1.5*sml_move);
+    else if (btn_left)
+    {
+      mmove(1.5 * smove_spd, -1.5 * smove_spd);
     }
-    else{
+    else
+    {
       move(c_3, c_1);
     }
-    if (btn_r1) {
-      hand1.setMaxTorque(1.5, currentUnits::amp);
-      hand2.setMaxTorque(1.5, currentUnits::amp);
-      hand1.spin(vex::directionType::fwd, handmove, vex::velocityUnits::pct);
-      hand2.spin(vex::directionType::rev, handmove, vex::velocityUnits::pct);
-    } else if (btn_r2) {
-      hand1.setMaxTorque(1.5, currentUnits::amp);
-      hand2.setMaxTorque(1.5, currentUnits::amp);
-      hand1.spin(vex::directionType::rev, handmove, vex::velocityUnits::pct);
-      hand2.spin(vex::directionType::fwd, handmove, vex::velocityUnits::pct);
-    } else {
-      hand1.setMaxTorque(0.1, currentUnits::amp);
-      hand2.setMaxTorque(0.1, currentUnits::amp);
-      hand1.stop(brakeType::hold);
-      hand2.stop(brakeType::hold);
+
+    // hand
+    if (btn_r1)
+    {
+      Spin(hand1, vex::directionType::fwd, collector_spd, 1.5);
+      Spin(hand2, vex::directionType::rev, collector_spd, 1.5);
+
+      // hand1.setMaxTorque(1.5, currentUnits::amp);
+      // hand2.setMaxTorque(1.5, currentUnits::amp);
+      // hand1.spin(vex::directionType::fwd, collector_spd, vex::velocityUnits::pct);
+      // hand2.spin(vex::directionType::rev, collector_spd, vex::velocityUnits::pct);
+    }
+    else if (btn_r2)
+    {
+      Spin(hand1, vex::directionType::rev, collector_spd, 1.5);
+      Spin(hand2, vex::directionType::fwd, collector_spd, 1.5);
+
+      // hand1.setMaxTorque(1.5, currentUnits::amp);
+      // hand2.setMaxTorque(1.5, currentUnits::amp);
+      // hand1.spin(vex::directionType::rev, collector_spd, vex::velocityUnits::pct);
+      // hand2.spin(vex::directionType::fwd, collector_spd, vex::velocityUnits::pct);
+    }
+    else
+    {
+      Stop(hand1, brakeType::hold, 0.1);
+      Stop(hand2, brakeType::hold, 0.1);
+
+      // hand1.setMaxTorque(0.1, currentUnits::amp);
+      // hand2.setMaxTorque(0.1, currentUnits::amp);
+      // hand1.stop(brakeType::hold);
+      // hand2.stop(brakeType::hold);
     }
 
-    dangerous = abs(push.rotation(rotationUnits::deg));
-    if (push_flag) {
-      int fdbk = -dangerous * 0.086 + 80;
+    // auto push
+    Brain.Screen.printAt(10, 10, "push_err is %5f", push_err);
+    push_err = abs(push.rotation(rotationUnits::deg));
+    if (push_flag)
+    {
+      int fdbk = -push_err * 0.086 + 80;
       arm.stop(brakeType::coast);
-      if(abs(fdbk) < 10){
+      if (abs(fdbk) < 10)
+      {
         hand1.stop(brakeType::coast);
         hand2.stop(brakeType::coast);
       }
-      if(abs(fdbk) < 2){
+      if (abs(fdbk) < 2)
+      {
         fdbk = 0;
         push_flag = false;
       }
@@ -144,70 +184,72 @@ void usercontrol(void) {
       push.spin(vex::directionType::fwd, fdbk, vex::velocityUnits::pct);
     }
 
-    if (controller1.ButtonA.pressing()) {
+    // manual push
+    if (btn_a)
+    {
       push_flag = true;
-    } else if(controller1.ButtonX.pressing()){
+    }
+    else if (btn_x)
+    {
       push_flag = false;
       push.setMaxTorque(2.4, currentUnits::amp);
       push.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-    } else if (controller1.ButtonB.pressing()) {
+    }
+    else if (btn_b)
+    {
       push_flag = false;
       push.setMaxTorque(2.4, currentUnits::amp);
       push.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
       push.resetRotation();
-    } else {
-      if (controller1.ButtonL1.pressing()) {
+    }
+    else
+    {
+      // arm
+      if (btn_l1)
+      {
         arm.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
         arm.setMaxTorque(2.4, currentUnits::amp);
-        if (dangerous < 340) {
+        if (push_err < 340)
+        {
           push.spin(directionType::fwd, 60, vex::velocityUnits::pct);
           push.setMaxTorque(2.4, currentUnits::amp);
-        } else {
+        }
+        else
+        {
           push.stop(brakeType::hold);
           push.setMaxTorque(0.2, currentUnits::amp);
         }
-      } else if (controller1.ButtonL2.pressing()) {
-
+      }
+      else if (btn_l2)
+      {
         arm.spin(directionType::rev, 80, vex::velocityUnits::pct);
         arm.setMaxTorque(2.4, currentUnits::amp);
-        if (dangerous > 0) {
+        if (push_err > 0)
+        {
           push.spin(directionType::rev, 45, vex::velocityUnits::pct);
           push.setMaxTorque(2.4, currentUnits::amp);
-        } else {
+        }
+        else
+        {
           push.stop(brakeType::hold);
           push.setMaxTorque(0.2, currentUnits::amp);
         }
-      } else {
+      }
+      else
+      {
         push.stop(coast);
-        
         arm.stop(brakeType::hold);
         arm.setMaxTorque(2.4, currentUnits::amp);
       }
-      // if (controller1.ButtonL1.pressing()){
-      // arm.spin(vex::directionType::fwd,100,vex::velocityUnits::pct);
-      // if (dangerous>-333){
-      // push.spin(vex::directionType::fwd,66,vex::velocityUnits::pct);}
-      //}
-      //        else if (controller1.ButtonL2.pressing()){
-      //        arm.spin(vex::directionType::rev,100,vex::velocityUnits::pct);
-      //    }
-      //  else{arm.stop(hold);}
     }
   }
-  // This is the main execution loop for the user control program.
-  // Each time through the loop your program should update motor + servo
-  // values based on feedback from the joysticks.
-
-  // ........................................................................
-  // Insert user code here. This is where you use the joystick values to
-  // update your motors, etc.
-  // .......................................................................
 }
 
 //
 // Main will set up the competition functions and callbacks.
 //
-int main() {
+int main()
+{
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -216,8 +258,8 @@ int main() {
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (1) {
-    vex::task::sleep(100); // Sleep the task for a short amount of time to
-                           // prevent wasted resources.
+  while (1)
+  {
+    vex::task::sleep(100); // Sleep the task for a short amount of time to prevent wasted resources.
   }
 }

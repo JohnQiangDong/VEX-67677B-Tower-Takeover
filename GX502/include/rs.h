@@ -6,10 +6,6 @@
 #include "status.h"
 
 void rs(){
-  double dangerous = 0;
-
-
-
   push.stop(brakeType::hold);
   push.setMaxTorque(0.2, currentUnits:: amp);
   arm.spin (directionType::fwd,100,vex::velocityUnits::pct);
