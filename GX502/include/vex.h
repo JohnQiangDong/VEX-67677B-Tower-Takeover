@@ -32,7 +32,8 @@ using namespace vex;
  vex::bumper stopper_2=vex::bumper(Brain.ThreeWirePort.F);
  vex::controller controller1 =vex::controller();
 
-/*vex::brain Brain;
+/*
+vex::brain Brain;
 vex::motor right_1(vex::PORT17,vex::gearSetting::ratio18_1,true);
 vex::motor right_2(vex::PORT13,vex::gearSetting::ratio18_1,false);
 vex::motor left_1(vex::PORT18,vex::gearSetting::ratio18_1,false);

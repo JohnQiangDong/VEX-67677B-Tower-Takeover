@@ -70,17 +70,7 @@ void autonomous()
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void Spin(vex::motor motor, vex::directionType dt, int pct, int mt)
-{
-  motor.setMaxTorque(mt, currentUnits::amp);
-  motor.spin(dt, pct, vex::velocityUnits::pct);
-}
 
-void Stop(vex::motor motor, brakeType bt, int mt)
-{
-  motor.setMaxTorque(mt, currentUnits::amp);
-  motor.stop(bt);
-}
 
 void usercontrol(void)
 {
@@ -136,11 +126,6 @@ void usercontrol(void)
     {
       Spin(hand1, vex::directionType::fwd, collector_spd, 1.5);
       Spin(hand2, vex::directionType::rev, collector_spd, 1.5);
-
-      // hand1.setMaxTorque(1.5, currentUnits::amp);
-      // hand2.setMaxTorque(1.5, currentUnits::amp);
-      // hand1.spin(vex::directionType::fwd, collector_spd, vex::velocityUnits::pct);
-      // hand2.spin(vex::directionType::rev, collector_spd, vex::velocityUnits::pct);
     }
     else if (btn_r2)
     {
@@ -156,11 +141,6 @@ void usercontrol(void)
     {
       Stop(hand1, brakeType::hold, 0.1);
       Stop(hand2, brakeType::hold, 0.1);
-
-      // hand1.setMaxTorque(0.1, currentUnits::amp);
-      // hand2.setMaxTorque(0.1, currentUnits::amp);
-      // hand1.stop(brakeType::hold);
-      // hand2.stop(brakeType::hold);
     }
 
     // auto push
@@ -172,16 +152,19 @@ void usercontrol(void)
       arm.stop(brakeType::coast);
       if (abs(fdbk) < 10)
       {
-        hand1.stop(brakeType::coast);
-        hand2.stop(brakeType::coast);
+        Stop(hand1,brakeType::coast,0.1);
+        Stop(hand2,brakeType::coast,0.1);
+        //hand1.stop(brakeType::coast);
+        //hand2.stop(brakeType::coast);
       }
       if (abs(fdbk) < 2)
       {
         fdbk = 0;
         push_flag = false;
       }
-      push.setMaxTorque(2.4, currentUnits::amp);
-      push.spin(vex::directionType::fwd, fdbk, vex::velocityUnits::pct);
+      Spin(push,vex::directionType::fwd,fdbk,2.2);
+      //push.setMaxTorque(2.4, currentUnits::amp);
+      //push.spin(vex::directionType::fwd, fdbk, vex::velocityUnits::pct);
     }
 
     // manual push
@@ -192,8 +175,14 @@ void usercontrol(void)
     else if (btn_x)
     {
       push_flag = false;
-      push.setMaxTorque(2.4, currentUnits::amp);
-      push.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
+      if (push_err < 340 )
+      Spin(push,vex::directionType::fwd,100,2.2);
+      else if (push_err < 500 )
+      Spin(push,vex::directionType::fwd,40,2.2);
+      else
+      Spin(push,vex::directionType::fwd,30,2.2);
+      //push.setMaxTorque(2.4, currentUnits::amp);
+      //push.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
     }
     else if (btn_b)
     {
@@ -207,39 +196,47 @@ void usercontrol(void)
       // arm
       if (btn_l1)
       {
-        arm.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
-        arm.setMaxTorque(2.4, currentUnits::amp);
+        Spin(arm, vex::directionType::fwd,80,2.2);
+        //arm.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
+        //arm.setMaxTorque(2.4, currentUnits::amp);
         if (push_err < 340)
         {
-          push.spin(directionType::fwd, 60, vex::velocityUnits::pct);
-          push.setMaxTorque(2.4, currentUnits::amp);
+          Spin(push, vex::directionType::fwd,60,2.4);
+          //push.spin(directionType::fwd, 60, vex::velocityUnits::pct);
+          //push.setMaxTorque(2.4, currentUnits::amp);
         }
         else
         {
-          push.stop(brakeType::hold);
-          push.setMaxTorque(0.2, currentUnits::amp);
+          Stop(push,brakeType::hold,0.2);
+          //push.stop(brakeType::hold);
+          //push.setMaxTorque(0.2, currentUnits::amp);
         }
       }
       else if (btn_l2)
       {
-        arm.spin(directionType::rev, 80, vex::velocityUnits::pct);
-        arm.setMaxTorque(2.4, currentUnits::amp);
+        Spin(arm,directionType::rev,80,2.2);
+        //arm.spin(directionType::rev, 80, vex::velocityUnits::pct);
+        //arm.setMaxTorque(2.4, currentUnits::amp);
         if (push_err > 0)
         {
-          push.spin(directionType::rev, 45, vex::velocityUnits::pct);
-          push.setMaxTorque(2.4, currentUnits::amp);
+          Spin(push,directionType::rev,45,2.2);
+          //push.spin(directionType::rev, 45, vex::velocityUnits::pct);
+          //push.setMaxTorque(2.4, currentUnits::amp);
         }
         else
         {
-          push.stop(brakeType::hold);
-          push.setMaxTorque(0.2, currentUnits::amp);
+          Stop(push, brakeType::hold,0.2);
+          //push.stop(brakeType::hold);
+          //push.setMaxTorque(0.2, currentUnits::amp);
         }
       }
       else
       {
-        push.stop(coast);
-        arm.stop(brakeType::hold);
-        arm.setMaxTorque(2.4, currentUnits::amp);
+        Stop(push,brakeType::coast,0.1);
+        //push.stop(coast);
+        Stop(arm,brakeType::hold,2.2);
+        //arm.stop(brakeType::hold);
+        //arm.setMaxTorque(2.4, currentUnits::amp);
       }
     }
   }
