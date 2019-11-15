@@ -70,13 +70,13 @@ void autonomous()
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void Spin(vex::motor motor, vex::directionType dt, int pct, double mt)
+void Spin(vex::motor motor, vex::directionType dt, int pct, int mt)
 {
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.spin(dt, pct, vex::velocityUnits::pct);
 }
 
-void Stop(vex::motor motor, brakeType bt, double mt)
+void Stop(vex::motor motor, brakeType bt, int mt)
 {
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.stop(bt);
