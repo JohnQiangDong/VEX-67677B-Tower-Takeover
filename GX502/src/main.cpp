@@ -144,19 +144,19 @@ void usercontrol(void) {
       push.spin(vex::directionType::fwd, fdbk, vex::velocityUnits::pct);
     }
 
-    if (controller1.ButtonA.pressing()) {
+    if (btn_a) {
       push_flag = true;
-    } else if(controller1.ButtonX.pressing()){
+    } else if(btn_x){
       push_flag = false;
       push.setMaxTorque(2.4, currentUnits::amp);
       push.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-    } else if (controller1.ButtonB.pressing()) {
+    } else if (btn_b) {
       push_flag = false;
       push.setMaxTorque(2.4, currentUnits::amp);
       push.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
       push.resetRotation();
     } else {
-      if (controller1.ButtonL1.pressing()) {
+      if (btn_l1) {
         arm.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
         arm.setMaxTorque(2.4, currentUnits::amp);
         if (dangerous < 340) {
@@ -166,7 +166,7 @@ void usercontrol(void) {
           push.stop(brakeType::hold);
           push.setMaxTorque(0.2, currentUnits::amp);
         }
-      } else if (controller1.ButtonL2.pressing()) {
+      } else if (btn_l2) {
 
         arm.spin(directionType::rev, 80, vex::velocityUnits::pct);
         arm.setMaxTorque(2.4, currentUnits::amp);
@@ -183,15 +183,6 @@ void usercontrol(void) {
         arm.stop(brakeType::hold);
         arm.setMaxTorque(2.4, currentUnits::amp);
       }
-      // if (controller1.ButtonL1.pressing()){
-      // arm.spin(vex::directionType::fwd,100,vex::velocityUnits::pct);
-      // if (dangerous>-333){
-      // push.spin(vex::directionType::fwd,66,vex::velocityUnits::pct);}
-      //}
-      //        else if (controller1.ButtonL2.pressing()){
-      //        arm.spin(vex::directionType::rev,100,vex::velocityUnits::pct);
-      //    }
-      //  else{arm.stop(hold);}
     }
   }
   // This is the main execution loop for the user control program.
