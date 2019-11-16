@@ -1,3 +1,5 @@
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 #include "automove.h"
 #include "vex.h"
 // positive to collect cubes
@@ -74,3 +76,4 @@ void Stop(vex::motor motor, brakeType bt, double mt)
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.stop(bt);
 }
+#endif

@@ -4,6 +4,7 @@
 #include "vex.h"
 #include "automove.h"
 #include "status.h"
+#include "functions.h"
 void bs(){
   /*
   push.spin(directionType ::fwd,50,velocityUnits::pct);
@@ -83,7 +84,17 @@ void bs(){
   hand2.setMaxTorque(0.1,currentUnits::amp);  
 }
 
-
+void test(){
+Spin(push,vex::directionType::rev,5,2.0);
+Spin(arm,vex::directionType::rev,5,2.0);
+Spin(hand1,vex::directionType::fwd,80,2.2);
+Spin(hand2,vex::directionType::fwd,80,2.2);
+vexDelay(500);
+Stop(hand1, brakeType::coast,0.1);
+Stop(hand2,brakeType::coast,0.1);
+Stop(arm,brakeType::hold,0.2);
+Stop(push, brakeType::hold,0.2);
+}
 
 
 #endif
