@@ -70,13 +70,11 @@ void autonomous()
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-
-
 void usercontrol(void)
 {
   double collector_spd = 81;
   int smove_spd = 2800;
-  double push_err = 0;
+  double push_err = 0, push_vlc = 0;
   double fdbk = 0;
   bool push_flag = false;
   bool push_hold = false;
@@ -89,7 +87,7 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (true)
   {
-    // reading.
+    // --- reading ---
     c_1 = controller1.Axis1.value();
     c_3 = controller1.Axis3.value();
     btn_l1 = controller1.ButtonL1.pressing();
@@ -105,25 +103,17 @@ void usercontrol(void)
     btn_right = controller1.ButtonRight.pressing();
     btn_left = controller1.ButtonLeft.pressing();
 
-    // moving.
+    // --- moving ---
     if (btn_up)
-    {
       mmove(smove_spd, smove_spd);
-    }
     else if (btn_right)
-    {
       mmove(1.5 * smove_spd, -1.5 * smove_spd);
-    }
     else if (btn_left)
-    {
       mmove(-1.5 * smove_spd, 1.5 * smove_spd);
-    }
     else
-    {
       move(c_3, c_1);
-    }
 
-    // hand
+    // --- hand ---
     if (btn_r1)
     {
       push_hold = false;
@@ -136,120 +126,103 @@ void usercontrol(void)
       Spin(hand1, vex::directionType::rev, collector_spd, 1.5);
       Spin(hand2, vex::directionType::fwd, collector_spd, 1.5);
     }
-    else
+    else if (!push_hold)
     {
-      if(!push_hold)
-      {
-        Stop(hand1, brakeType::hold, 0.1);
-        Stop(hand2, brakeType::hold, 0.1);
-      }
+      Stop(hand1, brakeType::hold, 0.1);
+      Stop(hand2, brakeType::hold, 0.1);
     }
 
-    // auto push
+    // --- auto push ---
     if (push_flag)
     {
       push_err = fabs(push.rotation(rotationUnits::deg));
-      push_hold = true;
+      push_vlc = fabs(push.velocity(vex::velocityUnits::pct)); // TODO: PID
+
       fdbk = 35 + (-push_err * 0.065 + 50);
       Brain.Screen.printAt(10, 10, "fdbk is %.2f", fdbk);
 
-      if(fabs(fdbk) < 37) {
+      if (fdbk < 37)
+      {
         push_flag = false;
         push_hold = false;
       }
-      else if (fabs(fdbk) < 39) {
-        Spin(push,vex::directionType::fwd,10,2.2);
+      else if (fdbk < 39)
+      {
+        Spin(push, vex::directionType::fwd, 10, 2.2);
       }
-      else if (fabs(fdbk) < 41) {
-        Spin(push,vex::directionType::fwd,20,2.2);
+      else if (fdbk < 41)
+      {
+        Spin(push, vex::directionType::fwd, 20, 2.2);
       }
-      else if (fabs(fdbk) < 45) {
+      else if (fdbk < 45)
+      {
         Stop(hand1, brakeType::coast, 0.1);
         Stop(hand2, brakeType::coast, 0.1);
-        Spin(push,vex::directionType::fwd,30,2.2);
+        Spin(push, vex::directionType::fwd, 30, 2.2);
       }
-      else if (fabs(fdbk) < 70) {
+      else if (fdbk < 70)
+      {
         Stop(arm, brakeType::coast, 0.1);
-        Spin(push,vex::directionType::fwd,fdbk,2.2);
+        Spin(push, vex::directionType::fwd, fdbk, 2.2);
       }
       else
-        Spin(push,vex::directionType::fwd,fdbk,2.2);
+        Spin(push, vex::directionType::fwd, fdbk, 2.2);
     }
 
-    // manual push
+    // --- manual push ---
     if (btn_a)
     {
+      // auto-push starts
       push_flag = true;
+      push_hold = true;
     }
     else if (btn_x)
     {
       push_flag = false;
-      push_hold = false;      
-      if (push_err < 150 )
-        Spin(push,vex::directionType::fwd,50,2.2);
-      else if (push_err < 350 )
-        Spin(push,vex::directionType::fwd,80,2.2);
+      push_hold = false;
+
+      if (push_err > 700)
+        Spin(push, vex::directionType::fwd, 50, 2.2);
+      else if (push_err > 500)
+        Spin(push, vex::directionType::fwd, 80, 2.2);
       else
-        Spin(push,vex::directionType::fwd,100,2.2);
+        Spin(push, vex::directionType::fwd, 100, 2.2);
     }
     else if (btn_b)
     {
       push_flag = false;
       push_hold = false;
+
       Spin(push, vex::directionType::rev, 100, 2.2);
       push.resetRotation();
     }
-    else
+    else if(!push_flag && !btn_l1 && !btn_l2)
     {
-      if(!push_flag) Stop(push, brakeType::hold, 0.1);
-      // arm
-      if (btn_l1)
-      {
-        push_hold = false;
-        Spin(arm, vex::directionType::fwd,80,2.2);
+      Stop(push, brakeType::hold, 0.1);
+    }
 
-        // if (push_err < 340)
-        // {
-        //   Spin(push, vex::directionType::fwd,60,2.4);
-        //   //push.spin(directionType::fwd, 60, vex::velocityUnits::pct);
-        //   //push.setMaxTorque(2.4, currentUnits::amp);
-        // }
-        // else
-        // {
-        //   Stop(push,brakeType::hold,0.2);
-        //   //push.stop(brakeType::hold);
-        //   //push.setMaxTorque(0.2, currentUnits::amp);
-        // }
-      }
-      else if (btn_l2)
-      {
-        push_hold = false;
-        Spin(arm,directionType::rev,80,2.2);
+    // --- arm ---
+    if (btn_l1)
+    {
+      push_hold = false;
+      Spin(arm, vex::directionType::fwd, 80, 2.2);
 
-        // if (push_err > 0)
-        // {
-        //   Spin(push,directionType::rev,45,2.2);
-        //   //push.spin(directionType::rev, 45, vex::velocityUnits::pct);
-        //   //push.setMaxTorque(2.4, currentUnits::amp);
-        // }
-        // else
-        // {
-        //   Stop(push, brakeType::hold,0.1);
-        //   //push.stop(brakeType::hold);
-        //   //push.setMaxTorque(0.2, currentUnits::amp);
-        // }
-      }
-      else
-      {
-        if(!push_hold) Stop(arm, brakeType::hold,0.1);
-      }
+      if (push_err < 340) // TODO: wating for testing.
+        Spin(push, vex::directionType::fwd,60,2.4);
+    }
+    else if (btn_l2)
+    {
+      push_hold = false;
+      Spin(arm, directionType::rev, 80, 2.2);
+    }
+    else if (!push_hold)
+    {
+      Stop(arm, brakeType::hold, 0.1);
     }
   }
 }
 
-//
 // Main will set up the competition functions and callbacks.
-//
 int main()
 {
   // Set up callbacks for autonomous and driver control periods.
