@@ -189,7 +189,7 @@ void rasing()
   }
 }
 
-void auto_pushing()
+void auto_pushing(void)
 {
   // --- auto push ---
   if (push_flag)
