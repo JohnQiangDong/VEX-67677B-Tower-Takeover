@@ -12,3 +12,4 @@ void Stop(vex::motor motor, brakeType bt, double mt) {
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.stop(bt);
 }
+#endif
