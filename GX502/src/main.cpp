@@ -116,19 +116,19 @@ void handing()
   if (btn_r1)
   {
     push_hold = false;
-    MotorSpin(hand1, vex::directionType::fwd, collector_pct, 1.5);
-    MotorSpin(hand2, vex::directionType::rev, collector_pct, 1.5);
+    Spin(hand1, vex::directionType::fwd, collector_pct, 1.5);
+    Spin(hand2, vex::directionType::rev, collector_pct, 1.5);
   }
   else if (btn_r2)
   {
     push_hold = false;
-    MotorSpin(hand1, vex::directionType::rev, collector_pct, 1.5);
-    MotorSpin(hand2, vex::directionType::fwd, collector_pct, 1.5);
+    Spin(hand1, vex::directionType::rev, collector_pct, 1.5);
+    Spin(hand2, vex::directionType::fwd, collector_pct, 1.5);
   }
   else if (!push_hold)
   {
-    MotorStop(hand1, brakeType::hold, 0.1);
-    MotorStop(hand2, brakeType::hold, 0.1);
+    Stop(hand1, brakeType::hold, 0.1);
+    Stop(hand2, brakeType::hold, 0.1);
   }
 }
 
@@ -147,23 +147,23 @@ void pushing()
     push_hold = false;
 
     if (push_err > 700)
-      MotorSpin(push, vex::directionType::fwd, 50, 2.2);
+      Spin(push, vex::directionType::fwd, 50, 2.2);
     else if (push_err > 500)
-      MotorSpin(push, vex::directionType::fwd, 80, 2.2);
+      Spin(push, vex::directionType::fwd, 80, 2.2);
     else
-      MotorSpin(push, vex::directionType::fwd, 100, 2.2);
+      Spin(push, vex::directionType::fwd, 100, 2.2);
   }
   else if (btn_b)
   {
     push_flag = false;
     push_hold = false;
 
-    MotorSpin(push, vex::directionType::rev, 100, 2.2);
+    Spin(push, vex::directionType::rev, 100, 2.2);
     push.resetRotation();
   }
   else if (!push_flag && !btn_l1 && !btn_l2)
   {
-    MotorStop(push, brakeType::hold, 0.1);
+    Stop(push, brakeType::hold, 0.1);
   }
 }
 
@@ -173,19 +173,19 @@ void rasing()
   if (btn_l1)
   {
     push_hold = false;
-    MotorSpin(arm, vex::directionType::fwd, 80, 2.2);
+    Spin(arm, vex::directionType::fwd, 80, 2.2);
 
     if (push_err < 340) // TODO: wating for testing.
-      MotorSpin(push, vex::directionType::fwd, 60, 2.4);
+      Spin(push, vex::directionType::fwd, 60, 2.4);
   }
   else if (btn_l2)
   {
     push_hold = false;
-    MotorSpin(arm, directionType::rev, 80, 2.2);
+    Spin(arm, directionType::rev, 80, 2.2);
   }
   else if (!push_hold)
   {
-    MotorStop(arm, brakeType::hold, 0.1);
+    Stop(arm, brakeType::hold, 0.1);
   }
 }
 
@@ -220,16 +220,16 @@ int auto_pushing()
         output = 35 + push_err * 0.065; // 85 - 45 fast push
       }
       Brain.Screen.printAt(10, 10, "output is %.2f", output);
-      MotorSpin(push, vex::directionType::fwd, output, 2.2);
+      Spin(push, vex::directionType::fwd, output, 2.2);
       // change to coast
       if (push_err < 135)
       {
-        MotorStop(hand1, brakeType::coast, 0.1);
-        MotorStop(hand2, brakeType::coast, 0.1);
+        Stop(hand1, brakeType::coast, 0.1);
+        Stop(hand2, brakeType::coast, 0.1);
       }
       if (push_err < 520)
       {
-        MotorStop(arm, brakeType::coast, 0.1);
+        Stop(arm, brakeType::coast, 0.1);
       }
       // *********************** end 2 *********************** //
 
@@ -245,25 +245,25 @@ int auto_pushing()
       // }
       // else if (output < 39)
       // {
-      //   MotorSpin(push, vex::directionType::fwd, 10, 2.2);
+      //   Spin(push, vex::directionType::fwd, 10, 2.2);
       // }
       // else if (output < 41)
       // {
-      //   MotorSpin(push, vex::directionType::fwd, 20, 2.2);
+      //   Spin(push, vex::directionType::fwd, 20, 2.2);
       // }
       // else if (output < 45)
       // {
-      //   MotorStop(hand1, brakeType::coast, 0.1);
-      //   MotorStop(hand2, brakeType::coast, 0.1);
-      //   MotorSpin(push, vex::directionType::fwd, 30, 2.2);
+      //   Stop(hand1, brakeType::coast, 0.1);
+      //   Stop(hand2, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, 30, 2.2);
       // }
       // else if (output < 70)
       // {
-      //   MotorStop(arm, brakeType::coast, 0.1);
-      //   MotorSpin(push, vex::directionType::fwd, output, 2.2);
+      //   Stop(arm, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
       // }
       // else
-      //   MotorSpin(push, vex::directionType::fwd, output, 2.2);
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
       // // *********************** end 1 *********************** //
     }
     vex::task::sleep(100);
@@ -274,6 +274,7 @@ int auto_pushing()
 void usercontrol(void)
 {
   push.resetRotation();
+  task AutoPush(auto_pushing);
   // User control code here, inside the loop
   while (true)
   {
@@ -282,7 +283,6 @@ void usercontrol(void)
     handing();
     pushing();
     rasing();
-    task AutoPush(auto_pushing);
   }
 }
 

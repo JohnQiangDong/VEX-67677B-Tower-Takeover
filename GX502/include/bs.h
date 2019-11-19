@@ -85,15 +85,15 @@ void bs(){
 }
 
 void test(){
-MotorSpin(push,vex::directionType::rev,5,2.0);
-MotorSpin(arm,vex::directionType::rev,5,2.0);
-MotorSpin(hand1,vex::directionType::fwd,80,2.2);
-MotorSpin(hand2,vex::directionType::fwd,80,2.2);
+Spin(push,vex::directionType::rev,5,2.0);
+Spin(arm,vex::directionType::rev,5,2.0);
+Spin(hand1,vex::directionType::fwd,80,2.2);
+Spin(hand2,vex::directionType::fwd,80,2.2);
 vexDelay(500);
-MotorStop(hand1, brakeType::coast,0.1);
-MotorStop(hand2,brakeType::coast,0.1);
-MotorStop(arm,brakeType::hold,0.2);
-MotorStop(push, brakeType::hold,0.2);
+Stop(hand1, brakeType::coast,0.1);
+Stop(hand2,brakeType::coast,0.1);
+Stop(arm,brakeType::hold,0.2);
+Stop(push, brakeType::hold,0.2);
 }
 
 
