@@ -197,7 +197,7 @@ int auto_pushing()
     if (push_flag)
     {
       // *********************** version 2 *********************** //
-      push_err = 750 - fabs(push.rotation(rotationUnits::deg));
+      push_err = 798 - fabs(push.rotation(rotationUnits::deg));
       push_vlc = fabs(push.velocity(vex::velocityUnits::pct)); // TODO: PID
       // output feedback
       if (push_err < 10) // break

@@ -6,7 +6,7 @@
 #include "status.h"
 
 void rs(){
-  push.stop(brakeType::hold);
+  /*push.stop(brakeType::hold);
   push.setMaxTorque(0.2, currentUnits:: amp);
   arm.spin (directionType::fwd,100,vex::velocityUnits::pct);
   mmove(3000,3000);
@@ -22,7 +22,7 @@ void rs(){
   left_2.stop(vex::brakeType::hold);
   right_1.stop(vex::brakeType::hold);
   right_2.stop(vex::brakeType::hold);
-  arm.stop(brakeType::hold);
+  arm.stop(brakeType::hold);*/
 
   arm.setMaxTorque(0.2, currentUnits::amp);
   //automove(-100, -100, 1000, 5000);
