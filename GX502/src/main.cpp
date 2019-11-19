@@ -215,9 +215,13 @@ int auto_pushing()
         output = 10 + push_err * 0.13;
         sum_err = 0;
       }
-      else
+      else if (push_err < 400) // 60 - 45 inertance reducing
       {
-        output = 35 + push_err * 0.065; // 85 - 45 fast push
+        output = 35 + push_err * 0.065; 
+      }
+      else  // 100 - 75 fast push
+      {
+        output = 50 + push_err * 0.065;
       }
       Brain.Screen.printAt(10, 10, "output is %.2f", output);
       Spin(push, vex::directionType::fwd, output, 2.2);
