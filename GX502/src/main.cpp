@@ -74,8 +74,8 @@ double collector_pct = 81;
 int smove_vot = 2800;
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 bool push_flag = false, push_hold = false;
-int c_1, c_3, btn_l1, btn_l2, btn_r1, btn_r2, 
-    btn_x, btn_a, btn_y, btn_b, 
+int c_1, c_3, btn_l1, btn_l2, btn_r1, btn_r2,
+    btn_x, btn_a, btn_y, btn_b,
     btn_up, btn_down, btn_right, btn_left;
 
 void reading()
@@ -189,82 +189,86 @@ void rasing()
   }
 }
 
-void auto_pushing(void)
+int auto_pushing()
 {
-  // --- auto push ---
-  if (push_flag)
+  while (true)
   {
-    // *********************** version 2 *********************** //
-    push_err = 750 - fabs(push.rotation(rotationUnits::deg));
-    push_vlc = fabs(push.velocity(vex::velocityUnits::pct)); // TODO: PID
-    // output feedback
-    if (push_err < 10) // break
+    // --- auto push ---
+    if (push_flag)
     {
-      push_flag = false;
-      push_hold = false;
-    }
-    else if (push_err < 50) // PID control
-    {
-      sum_err += push_err * 0.1;
-      output = 20 + push_err * 0.1 - push_vlc * 0.3 + sum_err * 0.03;
-    }
-    else if (push_err < 150) // 30 - 16 inertance off
-    {
-      output = 10 + push_err * 0.13;
-      sum_err = 0;
-    }
-    else
-    {
-      output = 35 + push_err * 0.065; // 85 - 45 fast push
-    }
-    Brain.Screen.printAt(10, 10, "output is %.2f", output);
-    Spin(push, vex::directionType::fwd, output, 2.2);
-    // change to coast
-    if (push_err < 135)
-    {
-      Stop(hand1, brakeType::coast, 0.1);
-      Stop(hand2, brakeType::coast, 0.1);
-    }
-    if (push_err < 520)
-    {
-      Stop(arm, brakeType::coast, 0.1);
-    }
-    // *********************** end 2 *********************** //
+      // *********************** version 2 *********************** //
+      push_err = 750 - fabs(push.rotation(rotationUnits::deg));
+      push_vlc = fabs(push.velocity(vex::velocityUnits::pct)); // TODO: PID
+      // output feedback
+      if (push_err < 10) // break
+      {
+        push_flag = false;
+        push_hold = false;
+      }
+      else if (push_err < 50) // PID control
+      {
+        sum_err += push_err * 0.1;
+        output = 20 + push_err * 0.1 - push_vlc * 0.3 + sum_err * 0.03;
+      }
+      else if (push_err < 150) // 30 - 16 inertance off
+      {
+        output = 10 + push_err * 0.13;
+        sum_err = 0;
+      }
+      else
+      {
+        output = 35 + push_err * 0.065; // 85 - 45 fast push
+      }
+      Brain.Screen.printAt(10, 10, "output is %.2f", output);
+      Spin(push, vex::directionType::fwd, output, 2.2);
+      // change to coast
+      if (push_err < 135)
+      {
+        Stop(hand1, brakeType::coast, 0.1);
+        Stop(hand2, brakeType::coast, 0.1);
+      }
+      if (push_err < 520)
+      {
+        Stop(arm, brakeType::coast, 0.1);
+      }
+      // *********************** end 2 *********************** //
 
-    // // *********************** version 1 *********************** //
-    // push_err = fabs(push.rotation(rotationUnits::deg));
-    // output = 35 + (-push_err * 0.065 + 50);
-    // Brain.Screen.printAt(10, 10, "output is %.2f", output);
+      // // *********************** version 1 *********************** //
+      // push_err = fabs(push.rotation(rotationUnits::deg));
+      // output = 35 + (-push_err * 0.065 + 50);
+      // Brain.Screen.printAt(10, 10, "output is %.2f", output);
 
-    // if (output < 37)
-    // {
-    //   push_flag = false;
-    //   push_hold = false;
-    // }
-    // else if (output < 39)
-    // {
-    //   Spin(push, vex::directionType::fwd, 10, 2.2);
-    // }
-    // else if (output < 41)
-    // {
-    //   Spin(push, vex::directionType::fwd, 20, 2.2);
-    // }
-    // else if (output < 45)
-    // {
-    //   Stop(hand1, brakeType::coast, 0.1);
-    //   Stop(hand2, brakeType::coast, 0.1);
-    //   Spin(push, vex::directionType::fwd, 30, 2.2);
-    // }
-    // else if (output < 70)
-    // {
-    //   Stop(arm, brakeType::coast, 0.1);
-    //   Spin(push, vex::directionType::fwd, output, 2.2);
-    // }
-    // else
-    //   Spin(push, vex::directionType::fwd, output, 2.2);
-    // // *********************** end 1 *********************** //
+      // if (output < 37)
+      // {
+      //   push_flag = false;
+      //   push_hold = false;
+      // }
+      // else if (output < 39)
+      // {
+      //   Spin(push, vex::directionType::fwd, 10, 2.2);
+      // }
+      // else if (output < 41)
+      // {
+      //   Spin(push, vex::directionType::fwd, 20, 2.2);
+      // }
+      // else if (output < 45)
+      // {
+      //   Stop(hand1, brakeType::coast, 0.1);
+      //   Stop(hand2, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, 30, 2.2);
+      // }
+      // else if (output < 70)
+      // {
+      //   Stop(arm, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
+      // }
+      // else
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
+      // // *********************** end 1 *********************** //
+    }
+    vex::task::sleep(100);
   }
-  vex::task::sleep(100);
+  return 0;
 }
 
 void usercontrol(void)
