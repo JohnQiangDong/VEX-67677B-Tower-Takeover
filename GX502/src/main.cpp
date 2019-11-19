@@ -74,28 +74,6 @@ double collector_pct = 81;
 int smove_vot = 2800;
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 bool push_flag = false, push_hold = false;
-int c_1, c_3, btn_l1, btn_l2, btn_r1, btn_r2,
-    btn_x, btn_a, btn_y, btn_b,
-    btn_up, btn_down, btn_right, btn_left;
-
-void reading()
-{
-  // --- reading ---
-  c_1 = controller1.Axis1.value();
-  c_3 = controller1.Axis3.value();
-  btn_l1 = controller1.ButtonL1.pressing();
-  btn_l2 = controller1.ButtonL2.pressing();
-  btn_r1 = controller1.ButtonR1.pressing();
-  btn_r2 = controller1.ButtonR2.pressing();
-  btn_x = controller1.ButtonX.pressing();
-  btn_a = controller1.ButtonA.pressing();
-  btn_y = controller1.ButtonY.pressing();
-  btn_b = controller1.ButtonB.pressing();
-  btn_up = controller1.ButtonUp.pressing();
-  btn_down = controller1.ButtonDown.pressing();
-  btn_right = controller1.ButtonRight.pressing();
-  btn_left = controller1.ButtonLeft.pressing();
-}
 
 void moving()
 {
@@ -215,9 +193,9 @@ int auto_pushing()
         output = 10 + push_err * 0.13;
         sum_err = 0;
       }
-      else if (push_err < 400) // 60 - 45 inertance reducing
+      else if (push_err < 400) // 50 - 35 inertance reducing
       {
-        output = 35 + push_err * 0.065; 
+        output = 25 + push_err * 0.065; 
       }
       else  // 100 - 75 fast push
       {
@@ -282,7 +260,6 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (true)
   {
-    reading();
     moving();
     handing();
     pushing();
