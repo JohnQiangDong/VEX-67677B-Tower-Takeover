@@ -177,7 +177,7 @@ int auto_pushing()
   {
     while (push_flag)
     {
-      push_err = 800 - fabs(push.rotation(rotationUnits::deg));
+      push_err = 815 - fabs(push.rotation(rotationUnits::deg));
       push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
       // pushing multi-layer control
