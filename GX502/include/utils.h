@@ -54,16 +54,16 @@ void mmove(double left_vot,double right_vot)
   right_2.spin(vex::directionType::fwd,right_vot,vex::voltageUnits::mV);
 }
 
-void move(int c_3, int c_1)
+void move(int c3, int c1)
 {
   // channel mis-touch preventing
-  if(abs(c_1) < 10) c_1 = 0;
-  if(abs(c_3) < 10) c_3 = 0;
+  if(abs(c1) < 10) c1 = 0;
+  if(abs(c3) < 10) c3 = 0;
   // rotate speed protecting
-  if(abs(c_1) > 60) ftr = 0.8;
+  if(abs(c1) > 60) ftr = 0.8;
   else ftr = 0.65;
-  lv = c_3 + c_1 * ftr;
-  rv = c_3 - c_1 * ftr;
+  lv = c3 + c1 * ftr;
+  rv = c3 - c1 * ftr;
 
   if(lv > 100) lv = 100;
   if(lv < -100) lv = -100;
