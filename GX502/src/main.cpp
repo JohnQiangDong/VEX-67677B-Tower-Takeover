@@ -216,7 +216,6 @@ int auto_pushing()
       if (push_err < 520)
       {
         Stop(arm, brakeType::coast, 0.1);
-        Stop(left, brakeType::coast, 0.1);
       }
       
       // sampling period
