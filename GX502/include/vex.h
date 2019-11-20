@@ -6,7 +6,6 @@
 /*    Description:  Default header for V5 projects                            */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-//
 
 #ifndef VEX_H
 #define VEX_H
