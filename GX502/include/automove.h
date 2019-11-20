@@ -1,9 +1,9 @@
 #ifndef AUTOMOVE_H
 #define AUTOMOVE_H
 #include "vex.h"
-#include "move.h"
+#include "utils.h"
 #include "math.h"
-#include "status.h"
+
 void autostop(int i,int t){
   Brain.Screen.printAt(1,40,"autostopping");
   left_1.stop(vex::brakeType::hold);
@@ -20,7 +20,7 @@ void autostop(int i,int t){
 }
 void autostart(double left, double right,double speed){//left and right must smaller than 200
   double minV=1000,maxV=speed,left_error,right_error,olv,orv,startV=2500,K=40;
-  double leftvelocity,rightvelocity,errorvelocity=0;
+  double left_vot,right_vot,errorvelocity=0;
   double k,k1=0.02,instant_error;
   static double left_rotation,right_rotation;
   double l=0,r=0;
@@ -35,19 +35,19 @@ void autostart(double left, double right,double speed){//left and right must sma
       if(Brain.timer(vex::timeUnits::msec)-t>2000)break;
       left_error=left_target-left_1.rotation(vex::rotationUnits::deg);
       right_error=right_target-right_1.rotation(vex::rotationUnits::deg);  
-      leftvelocity=(fabs(left-left_error)*K+startV)*left/fabs(left);
-      rightvelocity=(fabs(right-right_error)*K+startV)*right/fabs(right);
+      left_vot=(fabs(left-left_error)*K+startV)*left/fabs(left);
+      right_vot=(fabs(right-right_error)*K+startV)*right/fabs(right);
       instant_error=fabs(left_error)-fabs(right_error);
       errorvelocity=1-fabs(instant_error)*0.02;
       if(errorvelocity<0.7)errorvelocity=0.7;
-      if(instant_error>0)rightvelocity*=errorvelocity;
-      else leftvelocity*=errorvelocity;
+      if(instant_error>0)right_vot*=errorvelocity;
+      else left_vot*=errorvelocity;
 
-      if(leftvelocity>maxV)leftvelocity=maxV;
-      if(leftvelocity<-maxV)leftvelocity=-maxV;
-      if(rightvelocity>maxV)rightvelocity=maxV;
-      if(rightvelocity<-maxV)rightvelocity=-maxV;
-      mmove(leftvelocity,rightvelocity);
+      if(left_vot>maxV)left_vot=maxV;
+      if(left_vot<-maxV)left_vot=-maxV;
+      if(right_vot>maxV)right_vot=maxV;
+      if(right_vot<-maxV)right_vot=-maxV;
+      mmove(left_vot,right_vot);
       if(left>=0&&left_error<=0)l=1;
       if(left<=0&&left_error>=0)l=1;
       if(right>=0&&right_error<=0)r=1;
@@ -60,7 +60,7 @@ void autobrake(double left_target,double right_target,double timelimit,double sp
   double left_Kp=30,right_Kp=30,Ki=0.0002,Kd=10,left_constantV=1000,right_constantV=1000,maxV=speed;
   double left_integral=0,left_error,left_last_error=0,left_D;
   double right_integral=0,right_error,right_last_error=0,right_D;
-  double leftvelocity,rightvelocity,instant_error,k,k1=0.1;
+  double left_vot,right_vot,instant_error,k,k1=0.1;
   double t=Brain.timer(vex::timeUnits::msec),time=Brain.timer(vex::timeUnits::msec),frequency=0;
   left_error=left_target-left_1.rotation(vex::rotationUnits::deg);
   right_error=right_target-right_1.rotation(vex::rotationUnits::deg);
@@ -84,17 +84,17 @@ void autobrake(double left_target,double right_target,double timelimit,double sp
       right_D=right_error-right_last_error;
       left_integral=left_integral+left_error;
       right_integral=right_integral+right_error;
-      leftvelocity=left_Kp*left_error + Ki*left_integral+Kd*left_D;
-      rightvelocity=right_Kp*right_error + Ki*right_integral+Kd*right_D;
-      if(left_error>0)leftvelocity=leftvelocity+left_constantV;
-      if(left_error<0)leftvelocity=leftvelocity-left_constantV;
-      if(right_error>0)rightvelocity=rightvelocity+right_constantV;
-      if(right_error<0)rightvelocity=rightvelocity-right_constantV;
-      if(leftvelocity>maxV)leftvelocity=maxV;
-      if(leftvelocity<-maxV)leftvelocity=-maxV;
-      if(rightvelocity>maxV)rightvelocity=maxV;
-      if(rightvelocity<-maxV)rightvelocity=-maxV;
-      mmove(leftvelocity,rightvelocity);
+      left_vot=left_Kp*left_error + Ki*left_integral+Kd*left_D;
+      right_vot=right_Kp*right_error + Ki*right_integral+Kd*right_D;
+      if(left_error>0)left_vot=left_vot+left_constantV;
+      if(left_error<0)left_vot=left_vot-left_constantV;
+      if(right_error>0)right_vot=right_vot+right_constantV;
+      if(right_error<0)right_vot=right_vot-right_constantV;
+      if(left_vot>maxV)left_vot=maxV;
+      if(left_vot<-maxV)left_vot=-maxV;
+      if(right_vot>maxV)right_vot=maxV;
+      if(right_vot<-maxV)right_vot=-maxV;
+      mmove(left_vot,right_vot);
       /*if(abs(left_error)<3&&abs(right_error)<3)Brain.Screen.drawRectangle(1,1,400,400,vex::color::red);//LED signal
       else Brain.Screen.drawRectangle(1,1,400,400,vex::color::green);*/
       //if(!left_constantV&&!right_constantV)break;
@@ -105,7 +105,7 @@ void autobrake(double left_target,double right_target,double timelimit,double sp
   
 }
 void autorun(double left_target,double right_target,double time,double speed){
-  double left_error,right_error,leftvelocity,rightvelocity,instant_error,errorvelocity;
+  double left_error,right_error,left_vot,right_vot,instant_error,errorvelocity;
   double t=Brain.timer(vex::timeUnits::msec),distance=speed/35;
   while(1){
       if(Brain.timer(vex::timeUnits::msec)-t>time)break;
@@ -116,13 +116,13 @@ void autorun(double left_target,double right_target,double time,double speed){
       instant_error=fabs(left_error)-fabs(right_error);
       errorvelocity=1-fabs(instant_error)*0.02;
       if(errorvelocity<0.7)errorvelocity=0.7;
-      if(instant_error>0)rightvelocity*=errorvelocity;
-      else leftvelocity*=errorvelocity;
-      if(left_error>distance)leftvelocity=speed;
-      if(left_error<-distance)leftvelocity=-speed;
-      if(right_error>distance)rightvelocity=speed;
-      if(right_error<-distance)rightvelocity=-speed;
-      mmove(leftvelocity,rightvelocity);
+      if(instant_error>0)right_vot*=errorvelocity;
+      else left_vot*=errorvelocity;
+      if(left_error>distance)left_vot=speed;
+      if(left_error<-distance)left_vot=-speed;
+      if(right_error>distance)right_vot=speed;
+      if(right_error<-distance)right_vot=-speed;
+      mmove(left_vot,right_vot);
   }
 }
 void automove(double left,double right,double time,double speed){
