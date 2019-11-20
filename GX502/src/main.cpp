@@ -177,7 +177,7 @@ int auto_pushing()
   {
     while (push_flag)
     {
-      push_err = 798 - fabs(push.rotation(rotationUnits::deg));
+      push_err = 800 - fabs(push.rotation(rotationUnits::deg));
       push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
       // pushing multi-layer control
@@ -200,9 +200,9 @@ int auto_pushing()
       {
         output = 25 + push_err * 0.065;
       }
-      else // 100 - 75 fast push
+      else // 100 fast push
       {
-        output = 50 + push_err * 0.065;
+        output = 100;
       }
       Brain.Screen.printAt(10, 10, "output is %.2f", output);
       Spin(push, vex::directionType::fwd, output, 2.2);
@@ -216,6 +216,7 @@ int auto_pushing()
       if (push_err < 520)
       {
         Stop(arm, brakeType::coast, 0.1);
+        Stop(left, brakeType::coast, 0.1);
       }
       
       // sampling period

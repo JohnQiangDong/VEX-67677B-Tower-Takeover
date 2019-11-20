@@ -6,27 +6,6 @@
 #include "math.h"
 
 /*----------------------------------------------------------------------------*/
-/*   Controller Definition
-/*----------------------------------------------------------------------------*/
-
-#define c_1          controller1.Axis1.value()
-#define c_2          controller1.Axis2.value()
-#define c_3          controller1.Axis3.value()
-#define c_4          controller1.Axis4.value()
-#define btn_l1          controller1.ButtonL1.pressing()
-#define btn_l2          controller1.ButtonL2.pressing()
-#define btn_r1          controller1.ButtonR1.pressing()
-#define btn_r2          controller1.ButtonR2.pressing()
-#define btn_x          controller1.ButtonX.pressing()
-#define btn_y          controller1.ButtonY.pressing()
-#define btn_a          controller1.ButtonA.pressing()
-#define btn_b          controller1.ButtonB.pressing()
-#define btn_left        controller1.ButtonLeft.pressing()
-#define btn_right       controller1.ButtonRight.pressing()
-#define btn_up          controller1.ButtonUp.pressing()
-#define btn_down        controller1.ButtonDown.pressing()
-
-/*----------------------------------------------------------------------------*/
 /*   Motor Control
 /*----------------------------------------------------------------------------*/
 
@@ -86,16 +65,16 @@ void move(int c3, int c1)
   else if(lv * olv < 0 && rv * orv < 0) //both change direction
   {
       if(fabs(lv - olv) > 50 && fabs(rv - orv) > 50) k = 0.18;
-      else k = 0.7;
+      else k = 0.5;
   }
   else if(lv * olv < 0 || rv * orv < 0) //either change direction
   {
       if(fabs(lv - olv) > 50 || fabs(rv - orv) > 50) k = 0.5;
-      else k = 1;
+      else k = 0.8;
   }
   else
   {
-      if(fabs(lv - olv) > 75 && fabs(rv - orv) > 75) k = 0.8;
+      if(fabs(lv - olv) > 50 && fabs(rv - orv) > 50) k = 0.8;
       else k = 1;
   }
 
