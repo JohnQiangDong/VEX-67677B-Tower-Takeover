@@ -6,18 +6,25 @@
 /*    Description:  V5 project                                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-
-#include "auto_bs.h"
-#include "auto_rs.h"
+#include "bs.h"
+#include "rs.h"
 
 #include "automove.h"
-#include "utils.h"
+#include "move.h"
+#include "functions.h"
+#include "status.h"
 
 #include "math.h"
 #include "vex.h"
 
 using namespace vex;
+
+// A global instance of vex::brain used for printing to the V5 brain screen
+
+// A global instance of vex::competition
 vex::competition Competition;
+
+// define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -47,7 +54,10 @@ void pre_auton(void)
 
 void autonomous()
 {
-  auto_bs();
+bs();
+  // ..........................................................................
+  // Insert autonomous user code here.
+  // ..........................................................................
 }
 
 /*---------------------------------------------------------------------------*/
@@ -65,9 +75,6 @@ int smove_vot = 2800;
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 bool push_flag = false, push_hold = false;
 
-/*----------------------------------------------------------------------------*/
-/*   Chassis Control
-/*----------------------------------------------------------------------------*/
 void moving()
 {
   // --- moving ---
@@ -81,9 +88,6 @@ void moving()
     move(c_3, c_1);
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Collector Control
-/*----------------------------------------------------------------------------*/
 void handing()
 {
   // --- hand ---
@@ -106,9 +110,6 @@ void handing()
   }
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Push Control
-/*----------------------------------------------------------------------------*/
 void pushing()
 {
   // --- manual push ---
@@ -144,11 +145,9 @@ void pushing()
   }
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Arm Control
-/*----------------------------------------------------------------------------*/
 void rasing()
 {
+  // --- arm ---
   if (btn_l1)
   {
     push_hold = false;
@@ -168,19 +167,17 @@ void rasing()
   }
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Auto Push Task
-/*----------------------------------------------------------------------------*/
 int auto_pushing()
 {
   while (true)
   {
-    while (push_flag)
+    // --- auto push ---
+    if (push_flag)
     {
+      // *********************** version 2 *********************** //
       push_err = 798 - fabs(push.rotation(rotationUnits::deg));
-      push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
-
-      // pushing multi-layer control
+      push_vlc = fabs(push.velocity(vex::velocityUnits::pct)); // TODO: PID
+      // output feedback
       if (push_err < 10) // break
       {
         push_flag = false;
@@ -198,15 +195,14 @@ int auto_pushing()
       }
       else if (push_err < 400) // 50 - 35 inertance reducing
       {
-        output = 25 + push_err * 0.065;
+        output = 25 + push_err * 0.065; 
       }
-      else // 100 - 75 fast push
+      else  // 100 - 75 fast push
       {
         output = 50 + push_err * 0.065;
       }
       Brain.Screen.printAt(10, 10, "output is %.2f", output);
       Spin(push, vex::directionType::fwd, output, 2.2);
-      
       // change to coast
       if (push_err < 135)
       {
@@ -217,25 +213,51 @@ int auto_pushing()
       {
         Stop(arm, brakeType::coast, 0.1);
       }
-      
-      // sampling period
-      vex::task::sleep(100); 
-    }
-    // saving resources
-    vex::task::sleep(300);
-  }
+      // *********************** end 2 *********************** //
 
+      // // *********************** version 1 *********************** //
+      // push_err = fabs(push.rotation(rotationUnits::deg));
+      // output = 35 + (-push_err * 0.065 + 50);
+      // Brain.Screen.printAt(10, 10, "output is %.2f", output);
+
+      // if (output < 37)
+      // {
+      //   push_flag = false;
+      //   push_hold = false;
+      // }
+      // else if (output < 39)
+      // {
+      //   Spin(push, vex::directionType::fwd, 10, 2.2);
+      // }
+      // else if (output < 41)
+      // {
+      //   Spin(push, vex::directionType::fwd, 20, 2.2);
+      // }
+      // else if (output < 45)
+      // {
+      //   Stop(hand1, brakeType::coast, 0.1);
+      //   Stop(hand2, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, 30, 2.2);
+      // }
+      // else if (output < 70)
+      // {
+      //   Stop(arm, brakeType::coast, 0.1);
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
+      // }
+      // else
+      //   Spin(push, vex::directionType::fwd, output, 2.2);
+      // // *********************** end 1 *********************** //
+    }
+    vex::task::sleep(100);
+  }
   return 0;
 }
 
-/*----------------------------------------------------------------------------*/
-/*   User control code here, inside the loop
-/*----------------------------------------------------------------------------*/
 void usercontrol(void)
 {
   push.resetRotation();
   task AutoPush(auto_pushing);
-
+  // User control code here, inside the loop
   while (true)
   {
     moving();
@@ -245,9 +267,7 @@ void usercontrol(void)
   }
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Main will set up the competition utils and callbacks
-/*----------------------------------------------------------------------------*/
+// Main will set up the competition functions and callbacks.
 int main()
 {
   // Set up callbacks for autonomous and driver control periods.
