@@ -154,7 +154,7 @@ void moveTarget(int tar, int max_pct, int kp, int kd, int ki)
     mi = -max_pct;
   }
 
-  stopChassis(vex::brakeType::coast);
+  stopChs(vex::brakeType::coast);
   vex::task::sleep(100); // waiting for stability
 
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
@@ -181,7 +181,7 @@ void turnTarget(int tar, int max_pct, int kp, int kd, int ki)
     mi = -max_pct;
   }
 
-  stopChassis(vex::brakeType::coast);
+  stopChs(vex::brakeType::coast);
   vex::task::sleep(100); // waiting for stability
 
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
