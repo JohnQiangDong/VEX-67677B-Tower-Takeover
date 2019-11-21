@@ -5,7 +5,6 @@
 #include "vex.h"
 #include "math.h"
 #include "pid.h"
-#include "utils.h"
 
 /*----------------------------------------------------------------------------*/
 /*   Motor Control
