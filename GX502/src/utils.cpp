@@ -7,6 +7,8 @@
 #include "pid.h"
 #include "utils.h"
 
+using namespace vex;
+
 /*----------------------------------------------------------------------------*/
 /*   Motor Control
 /*----------------------------------------------------------------------------*/
@@ -122,11 +124,11 @@ void resetChsRot()
 double getChsRot(int fow_tur)
 {
   if (fow_tur)
-    return fow_tur(left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
-                   right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
+            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
   else
-    return fow_tur(left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
-                   right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
+            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -160,7 +162,7 @@ void moveTarget(int tar, int max_pct, int kp, int kd, int ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (abs(tar - getChsRot(1)) > 20)
+  while (fabs(tar - getChsRot(1)) > 20)
   {
     double output = pid.calculate(tar, getChsRot(1));
     move(output, 0);
@@ -187,7 +189,7 @@ void turnTarget(int tar, int max_pct, int kp, int kd, int ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (abs(tar - getChsRot(0)) > 20)
+  while (fabs(tar - getChsRot(0)) > 20)
   {
     double output = pid.calculate(tar, getChsRot(0));
     move(0, output);
