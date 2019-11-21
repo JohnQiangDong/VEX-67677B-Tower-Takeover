@@ -24,6 +24,44 @@ void Stop(vex::motor motor, brakeType bt, double mt)
 }
 
 /*----------------------------------------------------------------------------*/
+/*   Reset Chassis Rotation
+/*----------------------------------------------------------------------------*/
+
+void resetChsRot()
+{
+  left_1.resetRotation();
+  left_2.resetRotation();
+  right_1.resetRotation();
+  right_2.resetRotation();
+}
+
+/*----------------------------------------------------------------------------*/
+/*   Get Chassis Rotation ( 1 for foward / 0 for turn)
+/*----------------------------------------------------------------------------*/
+
+double getChsRot(int fow_tur)
+{
+  if (fow_tur)
+    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
+            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+  else
+    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
+            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+}
+
+/*----------------------------------------------------------------------------*/
+/*   Chassis Stop
+/*----------------------------------------------------------------------------*/
+
+void stopChs(vex::brakeType bt)
+{
+  left_1.stop(bt);
+  left_2.stop(bt);
+  right_1.stop(bt);
+  right_2.stop(bt);
+}
+
+/*----------------------------------------------------------------------------*/
 /*   Chassis Moving Control
 /*----------------------------------------------------------------------------*/
 
@@ -101,44 +139,6 @@ void move(int c3, int c1)
 
   mmove(130 * (k * lv + (1 - k) * olv),
         130 * (k * rv + (1 - k) * orv));
-}
-
-/*----------------------------------------------------------------------------*/
-/*   Reset Chassis Rotation
-/*----------------------------------------------------------------------------*/
-
-void resetChsRot()
-{
-  left_1.resetRotation();
-  left_2.resetRotation();
-  right_1.resetRotation();
-  right_2.resetRotation();
-}
-
-/*----------------------------------------------------------------------------*/
-/*   Get Chassis Rotation ( 1 for foward / 0 for turn)
-/*----------------------------------------------------------------------------*/
-
-double getChsRot(int fow_tur)
-{
-  if (fow_tur)
-    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
-            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
-  else
-    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
-            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
-}
-
-/*----------------------------------------------------------------------------*/
-/*   Chassis Stop
-/*----------------------------------------------------------------------------*/
-
-void stopChs(vex::brakeType bt)
-{
-  left_1.stop(bt);
-  left_2.stop(bt);
-  right_1.stop(bt);
-  right_2.stop(bt);
 }
 
 /*----------------------------------------------------------------------------*/
