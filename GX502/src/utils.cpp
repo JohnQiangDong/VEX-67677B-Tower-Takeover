@@ -186,7 +186,7 @@ void turnTarget(int tar, int max_pct, int kp, int kd, int ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (err > 20)
+  while (abs(tar - getChsRot(0))> 20)
   {
     double output = pid.calculate(tar, getChsRot(0));
     move(0, output);
