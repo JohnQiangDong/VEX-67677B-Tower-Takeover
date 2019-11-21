@@ -5,6 +5,7 @@
 #include "vex.h"
 #include "math.h"
 #include "pid.h"
+#include "utils.h"
 
 /*----------------------------------------------------------------------------*/
 /*   Motor Control
@@ -186,7 +187,7 @@ void turnTarget(int tar, int max_pct, int kp, int kd, int ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (abs(tar - getChsRot(0))> 20)
+  while (abs(tar - getChsRot(0)) > 20)
   {
     double output = pid.calculate(tar, getChsRot(0));
     move(0, output);

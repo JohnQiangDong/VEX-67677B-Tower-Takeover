@@ -23,11 +23,10 @@
 #ifndef _PID_SOURCE_
 #define _PID_SOURCE_
 
-#include <iostream>
-#include <cmath>
-#include "pid.h"
 
-using namespace std;
+#include "pid.h"
+#include "vex.h"
+#include "math.h"
 
 class PIDImpl
 {
