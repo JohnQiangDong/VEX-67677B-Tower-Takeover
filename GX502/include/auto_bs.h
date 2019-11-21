@@ -39,7 +39,7 @@ void auto_bs()
   hand1.spin(directionType::fwd, 100, vex::velocityUnits::pct);
   hand2.spin(directionType::rev, 100, vex::velocityUnits::pct);
   //collect frist 3 cubes
-  automove(1350, 1350, 6000, 6000);
+  automove(830, 830, 6000, 4000);
 
   hand1.stop(vex::brakeType::hold);
   hand2.stop(vex::brakeType::hold);
@@ -47,10 +47,10 @@ void auto_bs()
   hand1.setMaxTorque(0.1, currentUnits::amp);
   hand2.setMaxTorque(0.1, currentUnits::amp);
   //stop hand
-  automove(119, -119, 2000, 14000);
-  autoturn(-1390, -1390, 3000, 9900);
+  automove(190, -190, 2000, 14000);
+  autoturn(-865, -865, 3000, 14000);
   //go back
-  automove(-144, 144, 2000, 14000);
+  automove(-180, 180, 2000, 14000);
   //automove(-200,-200,2000,10000);
 
   //start to collect another four cubes
