@@ -76,7 +76,7 @@ void move(int c3, int c1)
 
   if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7)
   {
-    stopChassis(vex::brakeType::coast);
+    stopChs(vex::brakeType::coast);
     return;
   }
   else if (lv * olv < 0 && rv * orv < 0) //both change direction
