@@ -1,9 +1,7 @@
 #ifndef _PID_SOURCE_
 #define _PID_SOURCE_
 
-#include "math.h"
 #include "pid.h"
-#include "vex.h"
 
 class PIDImpl
 {
