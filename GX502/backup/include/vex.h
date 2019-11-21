@@ -60,13 +60,3 @@ vex::controller controller1 = vex::controller();
 #define btn_down        controller1.ButtonDown.pressing()
 
 #endif
-
-#include "robot-config.h"
-
-#define waitUntil(condition)                                                   \
-  do {                                                                         \
-    wait(5, msec);                                                             \
-  } while (!(condition))
-
-#define repeat(iterations)                                                     \
-  for (int iterator = 0; iterator < iterations; iterator++)
