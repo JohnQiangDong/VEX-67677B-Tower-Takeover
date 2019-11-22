@@ -86,18 +86,40 @@ void auto_bs()
 
 void test()
 {
-  // Spin(push, vex::directionType::rev, 5, 2.0);
-  // Spin(arm, vex::directionType::rev, 5, 2.0);
-  // Spin(hand1, vex::directionType::fwd, 80, 2.2);
-  // Spin(hand2, vex::directionType::fwd, 80, 2.2);
-  // vexDelay(500);
-  // Stop(hand1, brakeType::coast, 0.1);
-  // Stop(hand2, brakeType::coast, 0.1);
-  // Stop(arm, brakeType::hold, 0.2);
-  // Stop(push, brakeType::hold, 0.2);
+  moveTarget(700, 50, 0.15, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  // turnTarget(500, 80, 0.1, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+}
 
-  // moveTarget(700, 50, 0.15, 0.1, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
-  turnTarget(500, 80, 0.1, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+int hand_start()
+{
+  vex::task::sleep(300);
+  Spin(hand1, vex::directionType::fwd, 80, 1.6);
+  Spin(hand2, vex::directionType::rev, 80, 1.6);
+
+  return 0;
+}
+
+int start_arm_push()
+{
+  Spin(push, vex::directionType::rev, 60, 2.2);
+  Spin(arm, vex::directionType::rev, 60, 2.2);
+  vex::task::sleep(300);
+  Stop(arm, brakeType::hold, 0.3);
+  vex::task::sleep(300);
+  Stop(push, brakeType::hold, 0.3);
+
+  return 0;
+}
+
+void n_bs(){
+  task ArmPushStart(start_arm_push);
+  moveTarget(450, 100, 0.3, 0.01,0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  task HandStart(hand_start);
+  moveTarget(-400,100,0.3,0.01,0.3,vex::brakeType::brake);                                                                                                                                                                                                                                               0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  
+  // moveTarget(-500,100,0.15,0.1,0.3,vex::brakeType::coast);
+  // moveTarget(830,60,0.15,0.1,0.3,vex::brakeType::brake);
+
 }
 
 #endif

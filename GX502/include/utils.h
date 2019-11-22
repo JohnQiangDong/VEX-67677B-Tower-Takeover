@@ -146,20 +146,21 @@ void move(int c3, int c1)
 
 void moveTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brakeType bt)
 {
-  int ma = max_pct, mi = 0;
+  int ma = max_pct, mi = 0, cof = 1;
   if (tar < 0)
   {
     ma = 0;
     mi = -max_pct;
+    cof = -1;
   }
 
-  stopChs(vex::brakeType::coast);
-  vex::task::sleep(100); // waiting for stability
+  stopChs(vex::brakeType::brake);
+  vex::task::sleep(50); // waiting for stability
 
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (tar - getChsRot(1) > max_pct)
+  while (cof * (tar - getChsRot(1)) > max_pct)
   {
     double output = pid.calculate(tar, getChsRot(1));
     Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(1));
@@ -206,11 +207,11 @@ void turnTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brak
   }
   stopChs(bt);
 
-  while (true)
-  {
-    Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
-    vex::task::sleep(100);
-  }
+  // while (true)
+  // {
+  //   Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
+  //   vex::task::sleep(100);
+  // }
 }
 
 #endif

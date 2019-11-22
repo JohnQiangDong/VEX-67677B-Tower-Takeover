@@ -44,7 +44,11 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous() { test(); }
+void autonomous() 
+{
+  // test(); 
+  n_bs(); 
+}
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
