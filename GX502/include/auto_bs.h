@@ -84,7 +84,7 @@ void auto_bs()
   hand2.setMaxTorque(0.1, currentUnits::amp);
 }
 
-void test2()
+void test()
 {
   // Spin(push, vex::directionType::rev, 5, 2.0);
   // Spin(arm, vex::directionType::rev, 5, 2.0);
@@ -96,8 +96,8 @@ void test2()
   // Stop(arm, brakeType::hold, 0.2);
   // Stop(push, brakeType::hold, 0.2);
 
-  moveTarget(500, 80, 0.1, 0.01, 0.3); // tar, max_pct, kp, kd, ki
-  turnTarget(500, 60, 0.1, 0.01, 0.3); // tar, max_pct, kp, kd, ki
+  // moveTarget(700, 50, 0.15, 0.1, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  turnTarget(500, 80, 0.1, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
 }
 
 #endif

@@ -41,11 +41,11 @@ void resetChsRot()
 double getChsRot(int fow_tur)
 {
   if (fow_tur)
-    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
-            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+    return left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
+            (right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
   else
-    return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
-            right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+    return left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
+            (right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -144,7 +144,7 @@ void move(int c3, int c1)
 /*   PID Move Forward
 /*----------------------------------------------------------------------------*/
 
-void moveTarget(int tar, int max_pct, double kp, double kd, double ki)
+void moveTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brakeType bt)
 {
   int ma = max_pct, mi = 0;
   if (tar < 0)
@@ -159,19 +159,28 @@ void moveTarget(int tar, int max_pct, double kp, double kd, double ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (fabs(tar - getChsRot(1)) > 20)
+  while (tar - getChsRot(1) > max_pct)
   {
     double output = pid.calculate(tar, getChsRot(1));
+    Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(1));
+    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
+
     move(output, 0);
     vex::task::sleep(100);
   }
+  stopChs(bt);
+  // while (true)
+  // {
+  //   Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
+  //   vex::task::sleep(100);
+  // }
 }
 
 /*----------------------------------------------------------------------------*/
 /*   PID Turn
 /*----------------------------------------------------------------------------*/
 
-void turnTarget(int tar, int max_pct, double kp, double kd, double ki)
+void turnTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brakeType bt)
 {
   int ma = max_pct, mi = 0;
   if (tar < 0)
@@ -186,10 +195,20 @@ void turnTarget(int tar, int max_pct, double kp, double kd, double ki)
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (fabs(tar - getChsRot(0)) > 20)
+  while (tar - getChsRot(0) > max_pct)
   {
     double output = pid.calculate(tar, getChsRot(0));
+    Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(0));
+    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
+
     move(0, output);
+    vex::task::sleep(100);
+  }
+  stopChs(bt);
+
+  while (true)
+  {
+    Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
     vex::task::sleep(100);
   }
 }

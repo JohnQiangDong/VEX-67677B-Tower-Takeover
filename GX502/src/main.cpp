@@ -9,7 +9,6 @@
 
 #include "auto_bs.h"
 #include "auto_rs.h"
-#include "test.h"
 
 #include "automove.h"
 #include "utils.h"
@@ -30,8 +29,7 @@ vex::competition Competition;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-void pre_auton(void)
-{
+void pre_auton(void) {
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -46,10 +44,7 @@ void pre_auton(void)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous()
-{
-  
-}
+void autonomous() { test(); }
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -61,7 +56,6 @@ void autonomous()
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-double collector_pct = 81;
 int smove_vot = 2800;
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 bool push_flag = false, push_hold = false;
@@ -69,8 +63,7 @@ bool push_flag = false, push_hold = false;
 /*----------------------------------------------------------------------------*/
 /*   Chassis Control
 /*----------------------------------------------------------------------------*/
-void moving()
-{
+void moving() {
   // --- moving ---
   if (btn_up)
     mmove(smove_vot, smove_vot);
@@ -85,42 +78,88 @@ void moving()
 /*----------------------------------------------------------------------------*/
 /*   Collector Control
 /*----------------------------------------------------------------------------*/
-void handing()
-{
+void handing() {
   // --- hand ---
-  if (btn_r1)
-  {
+  if (btn_r1) {
     push_hold = false;
-    Spin(hand1, vex::directionType::fwd, collector_pct, 1.5);
-    Spin(hand2, vex::directionType::rev, collector_pct, 1.5);
-  }
-  else if (btn_r2)
-  {
+    Spin(hand1, vex::directionType::fwd, 80, 1.6);
+    Spin(hand2, vex::directionType::rev, 80, 1.6);
+  } else if (btn_r2) {
     push_hold = false;
-    Spin(hand1, vex::directionType::rev, collector_pct, 1.5);
-    Spin(hand2, vex::directionType::fwd, collector_pct, 1.5);
-  }
-  else if (!push_hold)
-  {
+    Spin(hand1, vex::directionType::rev, 80, 1.6);
+    Spin(hand2, vex::directionType::fwd, 80, 1.6);
+  } else if (!push_hold) {
     Stop(hand1, brakeType::hold, 0.1);
     Stop(hand2, brakeType::hold, 0.1);
   }
 }
 
 /*----------------------------------------------------------------------------*/
+/*   Auto Push Task
+/*----------------------------------------------------------------------------*/
+int auto_pushing() {
+  while (push_flag) {
+    push_err = 800 - fabs(push.rotation(rotationUnits::deg));
+    push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
+
+    // pushing multi-layer control
+    if (push_err < 10) // break
+    {
+      push_flag = false;
+      push_hold = false;
+    } 
+    else if (push_err < 100) // PID control
+    {
+      sum_err += push_err * 0.1;
+      output = 17 + push_err * 0.1 - push_vlc * 0.4 + sum_err * 0.08;
+    }
+    else if (push_err < 180) // PID control
+    {
+      output = 20 + push_err * 0.065 - push_vlc * 0.3;
+    } 
+    else if (push_err < 270) // 60 - 40 inertance reducing
+    {
+      output = 30 + push_err * 0.065 - push_vlc * 0.2;
+    } 
+    else // 100 fast push
+    {
+      output = 100;
+    }
+    Brain.Screen.printAt(10, 10, "output is %.2f", output);
+    Spin(push, vex::directionType::fwd, output, 2.2);
+
+    // change to coast
+    if (push_err < 135) {
+      Stop(hand1, brakeType::coast, 0.1);
+      Stop(hand2, brakeType::coast, 0.1);
+    }
+    if (push_err < 520) {
+      Stop(arm, brakeType::coast, 0.1);
+    }
+    // sampling period
+    vex::task::sleep(100);
+  }
+  push_hold = true;
+  Spin(hand1, vex::directionType::rev, 80, 1.6);
+  Spin(hand2, vex::directionType::fwd, 80, 1.6);
+  vex::task::sleep(100);
+  Stop(hand1,brakeType::coast,0.1);
+  Stop(hand2,brakeType::coast,0.1);
+  push_hold = false;
+  return 0;
+}
+
+/*----------------------------------------------------------------------------*/
 /*   Push Control
 /*----------------------------------------------------------------------------*/
-void pushing()
-{
+void pushing() {
   // --- manual push ---
-  if (btn_a)
-  {
+  if (btn_a) {
     // auto-push starts
     push_flag = true;
     push_hold = true;
-  }
-  else if (btn_x)
-  {
+    task AutoPush(auto_pushing);
+  } else if (btn_x) {
     push_flag = false;
     push_hold = false;
 
@@ -130,17 +169,13 @@ void pushing()
       Spin(push, vex::directionType::fwd, 80, 2.2);
     else
       Spin(push, vex::directionType::fwd, 100, 2.2);
-  }
-  else if (btn_b)
-  {
+  } else if (btn_b) {
     push_flag = false;
     push_hold = false;
 
     Spin(push, vex::directionType::rev, 100, 2.2);
     push.resetRotation();
-  }
-  else if (!push_flag && !btn_l1 && !btn_l2)
-  {
+  } else if (!push_flag && !btn_l1 && !btn_l2) {
     Stop(push, brakeType::hold, 0.1);
   }
 }
@@ -148,97 +183,28 @@ void pushing()
 /*----------------------------------------------------------------------------*/
 /*   Arm Control
 /*----------------------------------------------------------------------------*/
-void rasing()
-{
-  if (btn_l1)
-  {
+void rasing() {
+  if (btn_l1) {
     push_hold = false;
     Spin(arm, vex::directionType::fwd, 80, 2.2);
 
     if (push_err < 340) // TODO: wating for testing.
       Spin(push, vex::directionType::fwd, 60, 2.4);
-  }
-  else if (btn_l2)
-  {
+  } else if (btn_l2) {
     push_hold = false;
     Spin(arm, directionType::rev, 80, 2.2);
-  }
-  else if (!push_hold)
-  {
+  } else if (!push_hold) {
     Stop(arm, brakeType::hold, 0.1);
   }
 }
 
 /*----------------------------------------------------------------------------*/
-/*   Auto Push Task
-/*----------------------------------------------------------------------------*/
-int auto_pushing()
-{
-  while (true)
-  {
-    while (push_flag)
-    {
-      push_err = 815 - fabs(push.rotation(rotationUnits::deg));
-      push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
-
-      // pushing multi-layer control
-      if (push_err < 10) // break
-      {
-        push_flag = false;
-        push_hold = false;
-      }
-      else if (push_err < 50) // PID control
-      {
-        sum_err += push_err * 0.1;
-        output = 20 + push_err * 0.1 - push_vlc * 0.3 + sum_err * 0.03;
-      }
-      else if (push_err < 150) // 30 - 16 inertance off
-      {
-        output = 10 + push_err * 0.13;
-        sum_err = 0;
-      }
-      else if (push_err < 400) // 50 - 35 inertance reducing
-      {
-        output = 25 + push_err * 0.065;
-      }
-      else // 100 fast push
-      {
-        output = 100;
-      }
-      Brain.Screen.printAt(10, 10, "output is %.2f", output);
-      Spin(push, vex::directionType::fwd, output, 2.2);
-      
-      // change to coast
-      if (push_err < 135)
-      {
-        Stop(hand1, brakeType::coast, 0.1);
-        Stop(hand2, brakeType::coast, 0.1);
-      }
-      if (push_err < 520)
-      {
-        Stop(arm, brakeType::coast, 0.1);
-      }
-      
-      // sampling period
-      vex::task::sleep(100); 
-    }
-    // saving resources
-    vex::task::sleep(300);
-  }
-
-  return 0;
-}
-
-/*----------------------------------------------------------------------------*/
 /*   User control code here, inside the loop
 /*----------------------------------------------------------------------------*/
-void usercontrol(void)
-{
+void usercontrol(void) {
   push.resetRotation();
-  task AutoPush(auto_pushing);
 
-  while (true)
-  {
+  while (true) {
     moving();
     handing();
     pushing();
@@ -249,8 +215,7 @@ void usercontrol(void)
 /*----------------------------------------------------------------------------*/
 /*   Main will set up the competition utils and callbacks
 /*----------------------------------------------------------------------------*/
-int main()
-{
+int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -259,8 +224,8 @@ int main()
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (1)
-  {
-    vex::task::sleep(100); // Sleep the task for a short amount of time to prevent wasted resources.
+  while (1) {
+    vex::task::sleep(100); // Sleep the task for a short amount of time to
+                           // prevent wasted resources.
   }
 }
