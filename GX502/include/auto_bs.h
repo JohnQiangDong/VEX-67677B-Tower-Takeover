@@ -4,6 +4,7 @@
 #include "vex.h"
 #include "automove.h"
 #include "utils.h"
+#include "ctrls.h"
 
 void auto_bs()
 {
@@ -12,7 +13,7 @@ void auto_bs()
   push.setMaxTorque(1.0, currentUnits:: amp);
   
   arm.spin (directionType::fwd,100,vex::velocityUnits::pct);
-  mmove(3000,3000);
+  chsSpin(3000,3000);
   vexDelay(700);
   left_1.stop(vex::brakeType::hold);
   left_2.stop(vex::brakeType::hold);
@@ -20,7 +21,7 @@ void auto_bs()
   right_2.stop(vex::brakeType::hold);
   push.spin(directionType ::fwd,-50,velocityUnits::pct);
   arm.spin(directionType::rev,100,vex::velocityUnits::pct);
-  mmove(-4000,-4000);
+  chsSpin(-4000,-4000);
   vexDelay(750);
   push.stop();
   left_1.stop(vex::brakeType::hold);
@@ -87,39 +88,33 @@ void auto_bs()
 void test()
 {
   moveTarget(700, 50, 0.15, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
-  // turnTarget(500, 80, 0.1, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
 }
 
 int hand_start()
 {
   vex::task::sleep(300);
-  Spin(hand1, vex::directionType::fwd, 80, 1.6);
-  Spin(hand2, vex::directionType::rev, 80, 1.6);
+  handsSpin(vex::directionType::fwd, 80, 1.6);
 
   return 0;
 }
 
 int start_arm_push()
 {
-  Spin(push, vex::directionType::rev, 60, 2.2);
-  Spin(arm, vex::directionType::rev, 60, 2.2);
+  motorSpin(push, vex::directionType::rev, 60, 2.2);
+  motorSpin(arm, vex::directionType::rev, 60, 2.2);
   vex::task::sleep(300);
-  Stop(arm, brakeType::hold, 0.3);
+  motorStop(arm, brakeType::hold, 0.3);
   vex::task::sleep(300);
-  Stop(push, brakeType::hold, 0.3);
+  motorStop(push, brakeType::hold, 0.3);
 
   return 0;
 }
 
 void n_bs(){
   task ArmPushStart(start_arm_push);
-  moveTarget(450, 100, 0.3, 0.01,0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  moveTarget(450, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   task HandStart(hand_start);
   moveTarget(-400,100,0.3,0.01,0.3,vex::brakeType::brake);                                                                                                                                                                                                                                               0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
-  
-  // moveTarget(-500,100,0.15,0.1,0.3,vex::brakeType::coast);
-  // moveTarget(830,60,0.15,0.1,0.3,vex::brakeType::brake);
-
 }
 
 #endif

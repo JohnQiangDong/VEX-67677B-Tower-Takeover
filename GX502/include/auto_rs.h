@@ -1,5 +1,6 @@
 #ifndef RS_H
 #define RS_H
+#include "ctrls.h"
 #include "utils.h"
 #include "vex.h"
 #include "automove.h"
@@ -8,14 +9,14 @@ void auto_rs(){
   /*push.stop(brakeType::hold);
   push.setMaxTorque(0.2, currentUnits:: amp);
   arm.spin (directionType::fwd,100,vex::velocityUnits::pct);
-  mmove(3000,3000);
+  chsSpin(3000,3000);
   vexDelay(500);
   left_1.stop(vex::brakeType::hold);
   left_2.stop(vex::brakeType::hold);
   right_1.stop(vex::brakeType::hold);
   right_2.stop(vex::brakeType::hold);
   arm.spin(directionType::rev,100,vex::velocityUnits::pct);
-  mmove(-4000,-4000);
+  chsSpin(-4000,-4000);
   vexDelay(500);
   left_1.stop(vex::brakeType::hold);
   left_2.stop(vex::brakeType::hold);

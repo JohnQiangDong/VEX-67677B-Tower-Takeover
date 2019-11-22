@@ -1,6 +1,7 @@
 #ifndef AUTOMOVE_H
 #define AUTOMOVE_H
 #include "vex.h"
+#include "ctrls.h"
 #include "utils.h"
 #include "math.h"
 
@@ -60,7 +61,7 @@ void autostart(double left, double right, double speed)
       right_vot = maxV;
     if (right_vot < -maxV)
       right_vot = -maxV;
-    mmove(left_vot, right_vot);
+    chsSpin(left_vot, right_vot);
     if (left >= 0 && left_error <= 0)
       l = 1;
     if (left <= 0 && left_error >= 0)
@@ -125,7 +126,7 @@ void autobrake(double left_target, double right_target, double timelimit, double
       right_vot = maxV;
     if (right_vot < -maxV)
       right_vot = -maxV;
-    mmove(left_vot, right_vot);
+    chsSpin(left_vot, right_vot);
     /*if(abs(left_error)<3&&abs(right_error)<3)Brain.Screen.drawRectangle(1,1,400,400,vex::color::red);//LED signal
       else Brain.Screen.drawRectangle(1,1,400,400,vex::color::green);*/
     //if(!left_constantV&&!right_constantV)break;
@@ -166,7 +167,7 @@ void autorun(double left_target, double right_target, double time, double speed)
       right_vot = speed;
     if (right_error < -distance)
       right_vot = -speed;
-    mmove(left_vot, right_vot);
+    chsSpin(left_vot, right_vot);
   }
 }
 void automove(double left, double right, double time, double speed)

@@ -1,25 +1,59 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include "automove.h"
 #include "vex.h"
 #include "math.h"
-#include "pid.h"
 
 /*----------------------------------------------------------------------------*/
 /*   Motor Control
 /*----------------------------------------------------------------------------*/
 
-void Spin(vex::motor motor, vex::directionType dt, int pct, double mt)
+void motorSpin(vex::motor motor, vex::directionType dt, int pct, double mt)
 {
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.spin(dt, pct, vex::velocityUnits::pct);
 }
 
-void Stop(vex::motor motor, brakeType bt, double mt)
+void motorStop(vex::motor motor, vex::brakeType bt, double mt)
 {
   motor.setMaxTorque(mt, currentUnits::amp);
   motor.stop(bt);
+}
+
+/*----------------------------------------------------------------------------*/
+/*   Chassis Control
+/*----------------------------------------------------------------------------*/
+
+void chsStop(vex::brakeType bt)
+{
+  left_1.stop(bt);
+  left_2.stop(bt);
+  right_1.stop(bt);
+  right_2.stop(bt);
+}
+
+void chsSpin(double left_vot, double right_vot)
+{
+  left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
+  left_2.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
+  right_1.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
+  right_2.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
+}
+
+/*----------------------------------------------------------------------------*/
+/*   Hands Control
+/*----------------------------------------------------------------------------*/
+
+void handsStop(vex::brakeType bt, double mt)
+{
+  motorStop(hand1, bt, mt);
+  motorStop(hand2, bt, mt);
+}
+
+void handsSpin(vex::directionType dt, int pct, double mt)
+{
+  motorSpin(hand1, dt, pct, mt);
+  motorSpin(hand2, dt, pct, mt);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -38,180 +72,34 @@ void resetChsRot()
 /*   Get Chassis Rotation ( 1 for foward / 0 for turn)
 /*----------------------------------------------------------------------------*/
 
-double getChsRot(int fow_tur)
+double getChsRot_Left()
 {
-  if (fow_tur)
-    return left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) +
-            (right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
-  else
-    return left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg) -
-            (right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 4;
+  return (left_1.rotation(rotationUnits::deg) + left_2.rotation(rotationUnits::deg)) / 2;
+}
+
+double getChsRot_Right()
+{
+  return (right_1.rotation(rotationUnits::deg) + right_2.rotation(rotationUnits::deg)) / 2;
+}
+
+
+double getChsRot(bool fow_tur)
+{
+  return fow_tur ? (getChsRot_Left() + getChsRot_Right()) / 2 : (getChsRot_Left() - getChsRot_Right()) / 2;
 }
 
 /*----------------------------------------------------------------------------*/
-/*   Chassis Stop
+/*   Get Chassis Velocity
 /*----------------------------------------------------------------------------*/
 
-void stopChs(vex::brakeType bt)
+double getChsVlc_Left()
 {
-  left_1.stop(bt);
-  left_2.stop(bt);
-  right_1.stop(bt);
-  right_2.stop(bt);
+  return (left_1.velocity(vex::velocityUnits::pct) + left_2.velocity(vex::velocityUnits::pct)) / 2;
 }
 
-/*----------------------------------------------------------------------------*/
-/*   Chassis Moving Control
-/*----------------------------------------------------------------------------*/
-
-double lv, rv, ftr, k, olv, orv;
-
-void mmove(double left_vot, double right_vot)
+double getChsVlc_Right()
 {
-  left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
-  left_2.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
-  right_1.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
-  right_2.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
-}
-
-/*----------------------------------------------------------------------------*/
-/*   Chassis Controller Move
-/*----------------------------------------------------------------------------*/
-
-void move(int c3, int c1)
-{
-  // channel mis-touch preventing
-  if (abs(c1) < 10)
-    c1 = 0;
-  if (abs(c3) < 10)
-    c3 = 0;
-  // rotate speed protecting
-  if (abs(c1) > 60)
-    ftr = 0.8;
-  else
-    ftr = 0.65;
-  lv = c3 + c1 * ftr;
-  rv = c3 - c1 * ftr;
-
-  if (lv > 100)
-    lv = 100;
-  if (lv < -100)
-    lv = -100;
-  if (rv > 100)
-    rv = 100;
-  if (rv < -100)
-    rv = -100;
-  if (fabs(lv) < 5)
-    lv = 0;
-  if (fabs(rv) < 5)
-    rv = 0;
-
-  olv = (left_1.velocity(vex::velocityUnits::pct) + left_2.velocity(vex::velocityUnits::pct)) / 2;
-  orv = (right_1.velocity(vex::velocityUnits::pct) + right_2.velocity(vex::velocityUnits::pct)) / 2;
-
-  if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7)
-  {
-    stopChs(vex::brakeType::coast);
-    return;
-  }
-  else if (lv * olv < 0 && rv * orv < 0) //both change direction
-  {
-    if (fabs(lv - olv) > 50 && fabs(rv - orv) > 50)
-      k = 0.18;
-    else
-      k = 0.5;
-  }
-  else if (lv * olv < 0 || rv * orv < 0) //either change direction
-  {
-    if (fabs(lv - olv) > 50 || fabs(rv - orv) > 50)
-      k = 0.5;
-    else
-      k = 0.8;
-  }
-  else
-  {
-    if (fabs(lv - olv) > 50 && fabs(rv - orv) > 50)
-      k = 0.8;
-    else
-      k = 1;
-  }
-
-  mmove(130 * (k * lv + (1 - k) * olv),
-        130 * (k * rv + (1 - k) * orv));
-}
-
-/*----------------------------------------------------------------------------*/
-/*   PID Move Forward
-/*----------------------------------------------------------------------------*/
-
-void moveTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brakeType bt)
-{
-  int ma = max_pct, mi = 0, cof = 1;
-  if (tar < 0)
-  {
-    ma = 0;
-    mi = -max_pct;
-    cof = -1;
-  }
-
-  stopChs(vex::brakeType::brake);
-  vex::task::sleep(50); // waiting for stability
-
-  PID pid = PID(0.1, ma, mi, kp, kd, ki);
-  resetChsRot();
-
-  while (cof * (tar - getChsRot(1)) > max_pct)
-  {
-    double output = pid.calculate(tar, getChsRot(1));
-    Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(1));
-    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
-
-    move(output, 0);
-    vex::task::sleep(100);
-  }
-  stopChs(bt);
-  // while (true)
-  // {
-  //   Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
-  //   vex::task::sleep(100);
-  // }
-}
-
-/*----------------------------------------------------------------------------*/
-/*   PID Turn
-/*----------------------------------------------------------------------------*/
-
-void turnTarget(int tar, int max_pct, double kp, double kd, double ki, vex::brakeType bt)
-{
-  int ma = max_pct, mi = 0;
-  if (tar < 0)
-  {
-    ma = 0;
-    mi = -max_pct;
-  }
-
-  stopChs(vex::brakeType::coast);
-  vex::task::sleep(100); // waiting for stability
-
-  PID pid = PID(0.1, ma, mi, kp, kd, ki);
-  resetChsRot();
-
-  while (tar - getChsRot(0) > max_pct)
-  {
-    double output = pid.calculate(tar, getChsRot(0));
-    Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(0));
-    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
-
-    move(0, output);
-    vex::task::sleep(100);
-  }
-  stopChs(bt);
-
-  // while (true)
-  // {
-  //   Brain.Screen.printAt(10, 10, "err is %.2f", fabs(tar - getChsRot(1)));
-  //   vex::task::sleep(100);
-  // }
+  return (right_1.velocity(vex::velocityUnits::pct) + right_2.velocity(vex::velocityUnits::pct)) / 2;
 }
 
 #endif
