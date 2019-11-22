@@ -6,6 +6,35 @@
 #include "utils.h"
 #include "ctrls.h"
 
+int start_hand()
+{
+  vex::task::sleep(300);
+  handsSpin(vex::directionType::fwd, 80, 1.6);
+
+  return 0;
+}
+
+int start_arm_push()
+{
+  motorSpin(push, vex::directionType::rev, 60, 2.2);
+  motorSpin(arm, vex::directionType::rev, 60, 2.2);
+  vex::task::sleep(300);
+  motorStop(arm, brakeType::hold, 0.3);
+  vex::task::sleep(300);
+  motorStop(push, brakeType::hold, 0.3);
+
+  return 0;
+}
+
+void bs_new(){
+  task ArmPushStart(start_arm_push);
+  moveTarget(450, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
+  task HandStart(start_hand);
+  moveTarget(-400,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3);                                                                                                                                                                                                                                               0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
 void auto_bs()
 {
   /*
@@ -84,37 +113,4 @@ void auto_bs()
   hand1.setMaxTorque(0.1, currentUnits::amp);
   hand2.setMaxTorque(0.1, currentUnits::amp);
 }
-
-void test()
-{
-  moveTarget(700, 50, 0.15, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
-}
-
-int hand_start()
-{
-  vex::task::sleep(300);
-  handsSpin(vex::directionType::fwd, 80, 1.6);
-
-  return 0;
-}
-
-int start_arm_push()
-{
-  motorSpin(push, vex::directionType::rev, 60, 2.2);
-  motorSpin(arm, vex::directionType::rev, 60, 2.2);
-  vex::task::sleep(300);
-  motorStop(arm, brakeType::hold, 0.3);
-  vex::task::sleep(300);
-  motorStop(push, brakeType::hold, 0.3);
-
-  return 0;
-}
-
-void n_bs(){
-  task ArmPushStart(start_arm_push);
-  moveTarget(450, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
-  task HandStart(hand_start);
-  moveTarget(-400,100,0.3,0.01,0.3,vex::brakeType::brake);                                                                                                                                                                                                                                               0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
-}
-
 #endif

@@ -11,7 +11,6 @@
 #include "auto_rs.h"
 
 #include "ctrls.h"
-#include "utils.h"
 
 #include "math.h"
 #include "vex.h"
@@ -39,26 +38,17 @@ void pre_auton(void)
 /*                                                                           */
 /*                              Autonomous Task                              */
 /*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
 void autonomous() 
 {
-  // test(); 
-  n_bs(); 
+  bs_new(); 
 }
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
 /*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) 
@@ -73,7 +63,9 @@ void usercontrol(void)
 }
 
 /*----------------------------------------------------------------------------*/
+/*                                                                            */
 /*   Main will set up the competition utils and callbacks                     */
+/*                                                                            */
 /*----------------------------------------------------------------------------*/
 
 int main() 
