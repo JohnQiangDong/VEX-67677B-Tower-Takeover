@@ -9,6 +9,7 @@
 
 #include "auto_bs.h"
 #include "auto_rs.h"
+#include "test.h"
 
 #include "automove.h"
 #include "utils.h"
@@ -47,7 +48,7 @@ void pre_auton(void)
 
 void autonomous()
 {
-  auto_bs();
+  
 }
 
 /*---------------------------------------------------------------------------*/

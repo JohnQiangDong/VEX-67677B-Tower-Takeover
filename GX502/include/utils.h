@@ -144,7 +144,7 @@ void move(int c3, int c1)
 /*   PID Move Forward
 /*----------------------------------------------------------------------------*/
 
-void moveTarget(int tar, int max_pct, int kp, int kd, int ki)
+void moveTarget(int tar, int max_pct, double kp, double kd, double ki)
 {
   int ma = max_pct, mi = 0;
   if (tar < 0)
@@ -171,7 +171,7 @@ void moveTarget(int tar, int max_pct, int kp, int kd, int ki)
 /*   PID Turn
 /*----------------------------------------------------------------------------*/
 
-void turnTarget(int tar, int max_pct, int kp, int kd, int ki)
+void turnTarget(int tar, int max_pct, double kp, double kd, double ki)
 {
   int ma = max_pct, mi = 0;
   if (tar < 0)

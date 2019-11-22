@@ -84,7 +84,7 @@ void auto_bs()
   hand2.setMaxTorque(0.1, currentUnits::amp);
 }
 
-void test()
+void test2()
 {
   // Spin(push, vex::directionType::rev, 5, 2.0);
   // Spin(arm, vex::directionType::rev, 5, 2.0);
