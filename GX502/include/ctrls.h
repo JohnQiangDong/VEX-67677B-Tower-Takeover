@@ -88,6 +88,9 @@ void moving()
 /*----------------------------------------------------------------------------*/
 /*   Collector Control
 /*----------------------------------------------------------------------------*/
+bool push_flag = false, push_hold = false;
+double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
+
 void handing() 
 {
   if (btn_hand_in) {
@@ -124,9 +127,6 @@ void rasing()
 /*----------------------------------------------------------------------------*/
 /*   Auto Push Task
 /*----------------------------------------------------------------------------*/
-
-bool push_flag = false, push_hold = false;
-double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 
 int autoPush() 
 {
