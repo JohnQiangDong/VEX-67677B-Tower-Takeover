@@ -27,10 +27,31 @@ int start_arm_push()
 }
 
 void bs_new(){
+  // hold the position of arm and push
   task ArmPushStart(start_arm_push);
   moveTarget(450, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
+  // start the robot and sprawl
   task HandStart(start_hand);
-  moveTarget(-400,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3);                                                                                                                                                                                                                                               0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  moveTarget(-400,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
+  // move forward get pre-loaded cube and 3 other cubes
+  moveTarget(1000,70,true,vex::brakeType::brake,0.3,0.01,0.3);
+  //turn left
+  
+  //move back
+  
+  //turn right
+  
+  //move back to reduce error
+  
+  //move forward and collect 4 cubes
+  
+  //turn left and collect 1 cube (optional)
+  
+  //turn right
+  
+  //start pushing during moving towards scoring area
+  
+  //wait to be stable and move back                                                                                                                                                                                                                                   0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
