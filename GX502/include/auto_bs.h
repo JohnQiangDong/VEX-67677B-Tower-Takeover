@@ -5,7 +5,71 @@
 #include "automove.h"
 #include "utils.h"
 #include "ctrls.h"
+int cubeposition()
+{
+  handsSpin(vex::directionType::fwd, 80, 1.6);
+  vex::task::sleep(500);
+  handsStop(vex::brakeType::coast, 0.1);
+  handsSpin(vex::directionType::rev, 80, 1.6);
+  vex::task::sleep(400);
+  handsStop(vex::brakeType::coast, 0.1);
+  return 0;
+}
 
+int PushInAuto() 
+{
+  vex::task::sleep(1300);
+  push.resetRotation();
+  while (push_flag) {
+    push_err = 810 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
+    push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
+
+    // pushing multi-layer control
+    if (push_err < 10) // break
+    {
+      push_flag = false;
+      push_hold = false;
+    } 
+    else if (push_err < 100) // PID control
+    {
+      sum_err += push_err * 0.1;
+      output = 17 + push_err * 0.1 - push_vlc * 0.4 + sum_err * 0.08;
+    }
+    else if (push_err < 180) // PID control
+    {
+      output = 20 + push_err * 0.065 - push_vlc * 0.3;
+    } 
+    else if (push_err < 360) // 60 - 40 inertance reducing
+    {
+      output = 30 + push_err * 0.065 - push_vlc * 0.2;
+    } 
+    else // 100 fast push
+    {
+      output = 100;
+    }
+    Brain.Screen.printAt(10, 10, "output is %.2f", output);
+    motorSpin(push, vex::directionType::fwd, output, 2.2);
+
+    // change to coast
+    if (push_err < 135) {
+      handsStop(vex::brakeType::coast, 0.1);
+    }
+    if (push_err < 520) {
+      motorStop(arm, brakeType::coast, 0.1);
+    }
+    // sampling period
+    vex::task::sleep(100);
+  }
+  motorStop(push, vex::brakeType ::hold, 0.2);
+  push_hold = true;
+  handsSpin(vex::directionType::rev, 80, 1.6);
+  vex::task::sleep(100);
+  handsStop(vex::brakeType::coast, 0.1);
+  push_hold = false;
+  vex::task::sleep(700);
+  moveTarget(-300,60,true,brakeType::coast,0.05,0.01,0.4);
+  return 0;
+}
 int start_hand()
 {
   vex::task::sleep(200);
@@ -20,7 +84,7 @@ int start_arm_push()
   motorSpin(arm, vex::directionType::rev, 60, 2.2);
   vex::task::sleep(300);
   motorStop(arm, brakeType::hold, 0.1);
-  vex::task::sleep(300);
+  vex::task::sleep(230);
   motorStop(push, brakeType::coast, 0.1);
 
   return 0;
@@ -30,15 +94,17 @@ int push_up()
   motorSpin(push, vex::directionType::fwd, 80, 2.2);
   vex::task::sleep(400);
   motorSpin(push, vex::directionType::rev, 100, 2.2);
-  vex::task::sleep(600);
+  vex::task::sleep(1000);
   motorStop(push, brakeType::hold, 0.1);
   return 0;
 }
 void test(){
   // moveTarget(300,80,false, vex::brakeType::brake,0.33,0.01,0.1); // +-1 error.
   // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
-  moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  //moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  //moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  moveTarget(-300,65,false,hold,0.3,0.01,1.2);
+  vexDelay(1000);
 }
 void bs_new(){
   // hold the position of arm and push
@@ -67,16 +133,21 @@ void bs_new(){
   moveTarget(830, 30,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
   moveTarget(50,100,false,brake,3,0.01,0.2);
-  moveTarget(100,100,true,brake,0.3,0.01,0.3);
+  moveTarget(120,100,true,hold,0.3,0.01,0.3);
   vexDelay(1000);
   motorStop(hand1,brakeType::hold,0.2);
   motorStop(hand2,brakeType::hold,0.2);
   //turn right
-  moveTarget(-327,65,false,hold,0.2,0,1);
-  vexDelay(1000);
-  //start pushing during moving towards scoring area 
-  
-  //wait to be stable and move back                                                                                                                                                                                                                                   0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
+  handsStop(vex::brakeType::coast, 0.1);
+  moveTarget(-300,70,false,hold,0.2,0.01,3);
+  task cube_position(cubeposition);
+  vexDelay(500);
+  //start pushing during moving towards scoring area   
+  push_flag = true;
+  task Push_In_Auto(PushInAuto);
+  moveTarget(550,55,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  moveTarget(200,55,true, vex::brakeType::coast, 0.2, 0, 0.3);
+  vexDelay(10000);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

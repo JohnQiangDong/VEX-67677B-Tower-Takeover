@@ -151,7 +151,7 @@ int autoPush()
     {
       output = 20 + push_err * 0.065 - push_vlc * 0.3;
     } 
-    else if (push_err < 350) // 60 - 40 inertance reducing
+    else if (push_err < 360) // 60 - 40 inertance reducing
     {
       output = 30 + push_err * 0.065 - push_vlc * 0.2;
     } 
@@ -293,5 +293,20 @@ void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, d
   // }
 }
 
+/*----------------------------------------------------------------------------*/
+/*   Secret
+/*----------------------------------------------------------------------------*/
+
+void secret() 
+{
+  while(!(
+    btn_left && btn_bck && 
+    btn_score_auto && btn_score_pull && 
+    btn_arm_up && btn_arm_dw && 
+    btn_hand_in && btn_hand_ot))
+  {
+    vex::task::sleep(1000);
+  }
+}
 
 #endif
