@@ -23,10 +23,10 @@ void moveCtrl(int c3, int c1)
   lv = c3 + c1 * ftr;
   rv = c3 - c1 * ftr;
 
-  lv = min(100, lv);
-  lv = max(-100, lv);
-  rv = min(100, rv);
-  rv = max(-100, rv);
+  lv = fmin(100, lv);
+  lv = fmax(-100, lv);
+  rv = fmin(100, rv);
+  rv = fmax(-100, rv);
 
   if (fabs(lv) < 5) lv = 0;
   if (fabs(rv) < 5) rv = 0;
@@ -264,7 +264,7 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double 
     ma = 0;
     mi = -max_pct;
     cof = -1;
-    tar = max(tar_l, tar_r);
+    tar = fmax(tar_l, tar_r);
   }
 
   chsStop(vex::brakeType::brake);
