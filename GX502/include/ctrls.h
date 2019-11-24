@@ -258,13 +258,12 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double 
 {
   if (tar_l * tar_r < 0) return; // tar_l and tar_r must be in same driection.
 
-  int ma = max_pct, mi = 0, cof = 1, tar = min(tar_l, tar_r);
+  int ma = max_pct, mi = 0, cof = 1;
   if (tar_l < 0 && tar_r < 0)
   {
     ma = 0;
     mi = -max_pct;
     cof = -1;
-    tar = fmax(tar_l, tar_r);
   }
 
   chsStop(vex::brakeType::brake);
@@ -278,7 +277,7 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double 
   {
     double output_l = 130 * pid_l.calculate(tar_l, getChsRot_Left());
     double output_r = 130 * pid_r.calculate(tar_r, getChsRot_Right());
-    Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(1));
+    Brain.Screen.printAt(10, 20, "err is %.2f", tar_l - getChsRot(1));
     Brain.Screen.printAt(10, 50, "opt is %.2f", output);
 
     chsSpin(output_l, output_r);
