@@ -102,4 +102,48 @@ double getChsVlc_Right()
   return (right_1.velocity(vex::velocityUnits::pct) + right_2.velocity(vex::velocityUnits::pct)) / 2;
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*   Gyro calculate task
+/*----------------------------------------------------------------------------*/
+float gyro_value = 0;
+bool gyro_cal = false;
+
+void resetGyro()
+{
+  gyro_cal = true;
+}
+
+int calcGyro()
+{
+  float _ori_gyro = 0;
+  float _last_ori_gyro = 0;
+  float _smart_gyro = 0;
+  float count = 0;
+  float gyroOffset = 0;
+
+  while(true)
+  {
+    _ori_gyro = GYRO;
+    if(_last_ori_gyro - _ori_gyro > 300)
+    {
+      count += 1;
+    }
+    if(_last_ori_gyro - _ori_gyro < -300)
+    {
+      count += -1;
+    }
+    _smart_gyro = count * 360 + _ori_gyro;
+    if(gyro_cal)
+    {
+      gyroOffset += gyro_value;
+      gyro_cal = false;
+    }
+    gyro_value = _smart_gyro - gyroOffset;
+    _last_ori_gyro = _ori_gyro;
+    printScreen(10, 100, "Real Gyro: %f", -gyro_value);
+    delay(1);
+  }
+}
+
 #endif
