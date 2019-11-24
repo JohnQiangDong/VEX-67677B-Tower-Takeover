@@ -15,6 +15,7 @@ using namespace vex;
 /*----------------------------------------------------------------------------*/
 
 vex::brain Brain;
+vex::competition Competition;
 
 vex::motor right_1(vex::PORT17, vex::gearSetting::ratio18_1, false);
 vex::motor right_2(vex::PORT16, vex::gearSetting::ratio18_1, true);

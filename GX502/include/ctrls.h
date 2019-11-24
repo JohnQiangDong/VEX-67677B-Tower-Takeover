@@ -293,5 +293,20 @@ void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, d
   // }
 }
 
+/*----------------------------------------------------------------------------*/
+/*   Secret
+/*----------------------------------------------------------------------------*/
+
+void secret() 
+{
+  while(!(
+    btn_left && btn_bck && 
+    btn_score_auto && btn_score_pull && 
+    btn_arm_up && btn_arm_dw && 
+    btn_hand_in && btn_hand_ot))
+  {
+    vex::task::sleep(1000);
+  }
+}
 
 #endif
