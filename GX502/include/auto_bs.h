@@ -8,7 +8,7 @@
 
 int start_hand()
 {
-  vex::task::sleep(300);
+  vex::task::sleep(200);
   handsSpin(vex::directionType::fwd, 80, 1.6);
 
   return 0;
@@ -19,26 +19,43 @@ int start_arm_push()
   motorSpin(push, vex::directionType::rev, 60, 2.2);
   motorSpin(arm, vex::directionType::rev, 60, 2.2);
   vex::task::sleep(300);
-  motorStop(arm, brakeType::hold, 0.3);
+  motorStop(arm, brakeType::hold, 0.1);
   vex::task::sleep(300);
-  motorStop(push, brakeType::hold, 0.3);
+  motorStop(push, brakeType::coast, 0.1);
 
   return 0;
 }
-
+int push_up()
+{
+  motorSpin(push, vex::directionType::fwd, 80, 2.2);
+  vex::task::sleep(400);
+  motorSpin(push, vex::directionType::rev, 100, 2.2);
+  vex::task::sleep(600);
+  motorStop(push, brakeType::hold, 0.1);
+  return 0;
+}
+void test(){
+  // moveTarget(300,80,false, vex::brakeType::brake,0.33,0.01,0.1); // +-1 error.
+  // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
+  moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+}
 void bs_new(){
   // hold the position of arm and push
   task ArmPushStart(start_arm_push);
-  moveTarget(450, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
+  moveTarget(250, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   // start the robot and sprawl
   task HandStart(start_hand);
-  moveTarget(-400,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
+  moveTarget(-290,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
   // move forward get pre-loaded cube and 3 other cubes
-  moveTarget(1000,70,true,vex::brakeType::brake,0.3,0.01,0.3);
-  //turn left
-  
+  task PushUp(push_up);
+  moveTarget(870,35,true,vex::brakeType::brake,0.3, 0.01, 0.3);
+  vex::task::sleep(500);  
+  handsStop(brakeType::hold, 0.1);
+  //turn right
+  moveTarget(50,100,false, vex::brakeType::brake,2,0.01,0.1);
   //move back
-  
+  moveTarget(-600,100,true,vex::brakeType::brake,0.3, 0.01, 0.3);  
   //turn right
   
   //move back to reduce error

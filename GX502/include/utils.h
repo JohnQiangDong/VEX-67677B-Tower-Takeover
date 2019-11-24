@@ -32,7 +32,8 @@ void chsStop(vex::brakeType bt)
   right_2.stop(bt);
 }
 
-void chsSpin(double left_vot, double right_vot)
+void \
+chsSpin(double left_vot, double right_vot)
 {
   left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
   left_2.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);

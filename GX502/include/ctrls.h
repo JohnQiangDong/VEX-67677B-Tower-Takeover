@@ -98,7 +98,7 @@ void handing()
     handsSpin(vex::directionType::fwd, 80, 1.6);
   } else if (btn_hand_ot) {
     push_hold = false;
-    handsSpin(vex::directionType::fwd, 80, 1.6);
+    handsSpin(vex::directionType::rev, 80, 1.6);
   } else if (!push_hold) {
     handsStop(vex::brakeType::hold, 0.1);
   }
@@ -107,15 +107,17 @@ void handing()
 /*----------------------------------------------------------------------------*/
 /*   Arm Control
 /*----------------------------------------------------------------------------*/
-
 void rasing() 
 {
   if (btn_arm_up) {
     push_hold = false;
     motorSpin(arm, vex::directionType::fwd, 80, 2.2);
 
-    if (push_err < 340) // TODO: wating for testing.
+    if (fabs(push.rotation(rotationUnits::deg)) < 300) // TODO: wating for testing.
       motorSpin(push, vex::directionType::fwd, 60, 2.4);
+    else{
+      motorStop(push, vex::brakeType::hold, 0.2);
+    }
   } else if (btn_arm_dw) {
     push_hold = false;
     motorSpin(arm, directionType::rev, 80, 2.2);
@@ -149,7 +151,7 @@ int autoPush()
     {
       output = 20 + push_err * 0.065 - push_vlc * 0.3;
     } 
-    else if (push_err < 270) // 60 - 40 inertance reducing
+    else if (push_err < 350) // 60 - 40 inertance reducing
     {
       output = 30 + push_err * 0.065 - push_vlc * 0.2;
     } 
@@ -230,10 +232,10 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt, double kp
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (cof * (tar - getChsRot(fwd_tur)) > max_pct)
+  while (cof * (tar - getChsRot(fwd_tur)) > 20)
   {
     double output = pid.calculate(tar, getChsRot(fwd_tur));
-    Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(fwd_tur));
+    Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(fwd_tur));
     Brain.Screen.printAt(10, 50, "opt is %.2f", output);
 
     if (fwd_tur) moveCtrl(output, 0);
@@ -246,9 +248,50 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt, double kp
 
   // while (true)
   // {
+  //   Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(fwd_tur));
+  //   vex::task::sleep(100);
+  // }
+}
+
+void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, double ki)
+{
+  int ma = max_pct, mi = 0, cof = 1;
+
+  if (tar < 0)
+  {
+    ma = 0;
+    mi = -max_pct;
+    cof = -1;
+  }
+
+  chsStop(vex::brakeType::brake);
+  vex::task::sleep(50);
+
+  PID pid = PID(0.1, ma, mi, kp, kd, ki);
+  gyro_1.calibrate(50);
+  
+  gyro_1.setHeading(0,rotationUnits::deg);
+  
+
+  while (cof * (tar - gyro_1.heading(rotationUnits::deg)) > 10)
+  {
+    double output = pid.calculate(tar, gyro_1.heading(rotationUnits::deg));
+    Brain.Screen.printAt(10, 10, "err is %.2f", tar - gyro_1.heading(rotationUnits::deg));
+    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
+    
+    moveCtrl(0, output);
+
+    vex::task::sleep(100);
+  }
+
+  chsStop(bt);
+
+  // while (true)
+  // {
   //   Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(fwd_tur));
   //   vex::task::sleep(100);
   // }
 }
+
 
 #endif
