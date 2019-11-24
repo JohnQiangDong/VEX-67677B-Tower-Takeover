@@ -54,10 +54,10 @@ void autonomous()
 
 void usercontrol(void) 
 {
-  //while(!(btn_left && btn_bck && btn_score_auto && btn_score_pull && btn_arm_up && btn_arm_dw && btn_hand_in && btn_hand_ot))
-  //{
-    //vex::task::sleep(2000);
-  //}
+  while(!(btn_left && btn_bck && btn_score_auto && btn_score_pull && btn_arm_up && btn_arm_dw && btn_hand_in && btn_hand_ot))
+  {
+    vex::task::sleep(2000);
+  }
   bs_new();
   while (true) 
   {
