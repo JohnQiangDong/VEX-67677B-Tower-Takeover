@@ -71,6 +71,12 @@ void usercontrol(void)
 
 int main() 
 {
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating())
+  {
+    vex::task::sleep(100);
+  }
+
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);

@@ -23,10 +23,11 @@ void moveCtrl(int c3, int c1)
   lv = c3 + c1 * ftr;
   rv = c3 - c1 * ftr;
 
-  if (lv > 100) lv = 100;
-  if (lv < -100) lv = -100;
-  if (rv > 100) rv = 100;
-  if (rv < -100) rv = -100;
+  lv = min(100, lv);
+  lv = max(-100, lv);
+  rv = min(100, rv);
+  rv = max(-100, rv);
+
   if (fabs(lv) < 5) lv = 0;
   if (fabs(rv) < 5) rv = 0;
 
@@ -251,6 +252,41 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt, double kp
   //   Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(fwd_tur));
   //   vex::task::sleep(100);
   // }
+}
+
+void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double kp, double kd, double ki)
+{
+  if (tar_l * tar_r < 0) return; // tar_l and tar_r must be in same driection.
+
+  int ma = max_pct, mi = 0, cof = 1, tar = min(tar_l, tar_r);
+  if (tar_l < 0 && tar_r < 0)
+  {
+    ma = 0;
+    mi = -max_pct;
+    cof = -1;
+    tar = max(tar_l, tar_r);
+  }
+
+  chsStop(vex::brakeType::brake);
+  vex::task::sleep(50);
+
+  PID pid_l = PID(0.1, ma, mi, kp, kd, ki);
+  PID pid_r = PID(0.1, ma, mi, kp, kd, ki);
+  resetChsRot();
+
+  while (cof * (tar_l - getChsRot_Left()) > 20 && cof * (tar_r - getChsRot_Right()) > 20)
+  {
+    double output_l = 130 * pid_l.calculate(tar_l, getChsRot_Left());
+    double output_r = 130 * pid_r.calculate(tar_r, getChsRot_Right());
+    Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(1));
+    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
+
+    chsSpin(output_l, output_r);
+
+    vex::task::sleep(100);
+  }
+
+  chsStop(bt);
 }
 
 void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, double ki)
