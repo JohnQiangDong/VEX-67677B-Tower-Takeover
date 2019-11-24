@@ -58,7 +58,7 @@ void usercontrol(void)
   //{
     //vex::task::sleep(2000);
   //}
-
+  bs_new();
   while (true) 
   {
     moving();

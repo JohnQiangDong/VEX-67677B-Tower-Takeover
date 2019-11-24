@@ -133,7 +133,7 @@ void rasing()
 int autoPush() 
 {
   while (push_flag) {
-    push_err = 800 - fabs(push.rotation(rotationUnits::deg));
+    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
     // pushing multi-layer control

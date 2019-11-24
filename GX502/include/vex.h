@@ -32,6 +32,24 @@ vex::bumper stopper_2 = vex::bumper(Brain.ThreeWirePort.F);
 vex::gyro gyro_1 = vex::gyro(Brain.ThreeWirePort.A);
 vex::controller ctrler = vex::controller();
 
+/*vex::brain Brain;
+
+vex::motor right_1(vex::PORT14, vex::gearSetting::ratio18_1, false);
+vex::motor right_2(vex::PORT19, vex::gearSetting::ratio18_1, true);
+vex::motor left_1(vex::PORT2, vex::gearSetting::ratio18_1, true);
+vex::motor left_2(vex::PORT18, vex::gearSetting::ratio18_1, false);
+vex::motor arm(vex::PORT12, vex::gearSetting::ratio36_1, true);
+vex::motor hand1(vex::PORT20, vex::gearSetting::ratio36_1, true);
+vex::motor hand2(vex::PORT17, vex::gearSetting::ratio36_1, false);
+vex::motor push(vex::PORT11, vex::gearSetting::ratio36_1, true);
+
+vex::bumper cubeplacerpush = vex::bumper(Brain.ThreeWirePort.A);
+vex::bumper cubeplacerpull = vex::bumper(Brain.ThreeWirePort.C);
+vex::bumper stopper_1 = vex::bumper(Brain.ThreeWirePort.E);
+vex::bumper stopper_2 = vex::bumper(Brain.ThreeWirePort.F);
+vex::gyro gyro_1 = vex::gyro(Brain.ThreeWirePort.A);
+vex::controller ctrler = vex::controller();*/
+
 /*----------------------------------------------------------------------------*/
 /*   Controller Definition
 /*----------------------------------------------------------------------------*/

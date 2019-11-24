@@ -42,7 +42,7 @@ void test(){
 }
 void bs_new(){
   // hold the position of arm and push
-  task ArmPushStart(start_arm_push);
+  /*task ArmPushStart(start_arm_push);
   moveTarget(250, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   // start the robot and sprawl
   task HandStart(start_hand);
@@ -55,18 +55,26 @@ void bs_new(){
   //turn right
   moveTarget(50,100,false, vex::brakeType::brake,2,0.01,0.1);
   //move back
-  moveTarget(-600,100,true,vex::brakeType::brake,0.3, 0.01, 0.3);  
+  moveTarget(-600,100,true,vex::brakeType::brake,0.3, 0.01, 0.3); */ 
   //turn right
   
   //move back to reduce error
   
   //move forward and collect 4 cubes
-  
+  task ArmPushStart(start_arm_push);
+  motorSpin(hand1,fwd,81,2.2);
+  motorSpin(hand2,fwd,81,2.2);
+  moveTarget(830, 30,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
-  
+  moveTarget(50,100,false,brake,3,0.01,0.2);
+  moveTarget(100,100,true,brake,0.3,0.01,0.3);
+  vexDelay(1000);
+  motorStop(hand1,brakeType::hold,0.2);
+  motorStop(hand2,brakeType::hold,0.2);
   //turn right
-  
-  //start pushing during moving towards scoring area
+  moveTarget(-327,65,false,hold,0.2,0,1);
+  vexDelay(1000);
+  //start pushing during moving towards scoring area 
   
   //wait to be stable and move back                                                                                                                                                                                                                                   0, 100, 0.3, 0.01, 0.3, vex::brakeType::brake); // tar, max_pct, kp, kd, ki
 }
