@@ -76,6 +76,7 @@ int main()
   {
     vex::task::sleep(100);
   }
+  task CalGyro(calcGyro);
 
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
