@@ -26,10 +26,10 @@ vex::motor hand1(vex::PORT19, vex::gearSetting::ratio36_1, true);
 vex::motor hand2(vex::PORT3, vex::gearSetting::ratio36_1, false);
 vex::motor push(vex::PORT1, vex::gearSetting::ratio36_1, true);
 
-vex::bumper cubeplacerpush = vex::bumper(Brain.ThreeWirePort.A);
-vex::bumper cubeplacerpull = vex::bumper(Brain.ThreeWirePort.C);
-vex::bumper stopper_1 = vex::bumper(Brain.ThreeWirePort.E);
-vex::bumper stopper_2 = vex::bumper(Brain.ThreeWirePort.F);
+// vex::bumper cubeplacerpush = vex::bumper(Brain.ThreeWirePort.A);
+// vex::bumper cubeplacerpull = vex::bumper(Brain.ThreeWirePort.C);
+// vex::bumper stopper_1 = vex::bumper(Brain.ThreeWirePort.E);
+// vex::bumper stopper_2 = vex::bumper(Brain.ThreeWirePort.F);
 vex::gyro gyro_1 = vex::gyro(Brain.ThreeWirePort.A);
 vex::controller ctrler = vex::controller();
 
@@ -57,6 +57,6 @@ vex::controller ctrler = vex::controller();
 #define btn_fwd ctrler.ButtonUp.pressing()
 #define btn_bck ctrler.ButtonDown.pressing()
 
-//#define gyro_deg gyro_1.heading(vex::rotationUnits::deg)
+#define gyro_deg gyro_1.value(vex::rotationUnits::deg)
 
 #endif
