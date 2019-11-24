@@ -152,7 +152,7 @@ int autoPush()
     {
       output = 20 + push_err * 0.065 - push_vlc * 0.3;
     } 
-    else if (push_err < 360) // 60 - 40 inertance reducing
+    else if (push_err < 370) // 60 - 40 inertance reducing
     {
       output = 30 + push_err * 0.065 - push_vlc * 0.2;
     } 

@@ -11,7 +11,7 @@ int cubeposition()
   vex::task::sleep(500);
   handsStop(vex::brakeType::coast, 0.1);
   handsSpin(vex::directionType::rev, 80, 1.6);
-  vex::task::sleep(400);
+  vex::task::sleep(350);
   handsStop(vex::brakeType::coast, 0.1);
   return 0;
 }
@@ -21,7 +21,7 @@ int PushInAuto()
   vex::task::sleep(1300);
   push.resetRotation();
   while (push_flag) {
-    push_err = 810 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
+    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
     // pushing multi-layer control
@@ -67,7 +67,7 @@ int PushInAuto()
   handsStop(vex::brakeType::coast, 0.1);
   push_hold = false;
   vex::task::sleep(700);
-  moveTarget(-300,60,true,brakeType::coast,0.05,0.01,0.4);
+  moveTarget(-300,60,true,brakeType::coast,0.01,0.01,0.4);
   return 0;
 }
 int start_hand()
@@ -103,8 +103,9 @@ void test(){
   // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
   //moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
   //moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  moveTarget(-300,65,false,hold,0.3,0.01,1.2);
-  vexDelay(1000);
+  //moveTarget(-300,65,false,hold,0.3,0.01,1.2); //large angle pid
+  turnTarget(300, 50, vex::brakeType::brake, 0.3, 0.01,0.1);
+//////
 }
 void bs_new(){
   // hold the position of arm and push
@@ -139,15 +140,15 @@ void bs_new(){
   motorStop(hand2,brakeType::hold,0.2);
   //turn right
   handsStop(vex::brakeType::coast, 0.1);
-  moveTarget(-300,70,false,hold,0.2,0.01,3);
-  task cube_position(cubeposition);
+  moveTarget(-310,70,false,hold,0.2,0.01,3);
+  //task cube_position(cubeposition);
   vexDelay(500);
   //start pushing during moving towards scoring area   
   push_flag = true;
-  task Push_In_Auto(PushInAuto);
-  moveTarget(550,55,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
-  moveTarget(200,55,true, vex::brakeType::coast, 0.2, 0, 0.3);
-  vexDelay(10000);
+  //task Push_In_Auto(PushInAuto);
+  //moveTarget(550,55,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  //moveTarget(220,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
+  //vexDelay(10000);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
