@@ -134,7 +134,7 @@ void rasing()
 int autoPush() 
 {
   while (push_flag) {
-    push_err = 800 - fabs(push.rotation(rotationUnits::deg));
+    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
     // pushing multi-layer control
@@ -152,7 +152,7 @@ int autoPush()
     {
       output = 20 + push_err * 0.065 - push_vlc * 0.3;
     } 
-    else if (push_err < 350) // 60 - 40 inertance reducing
+    else if (push_err < 360) // 60 - 40 inertance reducing
     {
       output = 30 + push_err * 0.065 - push_vlc * 0.2;
     } 
