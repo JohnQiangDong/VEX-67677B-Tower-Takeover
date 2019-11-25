@@ -109,4 +109,9 @@ double getChsVlc_Right()
 {
   return (right_1.velocity(vex::velocityUnits::pct) + right_2.velocity(vex::velocityUnits::pct)) / 2;
 }
+
+bool isChsStop()
+{
+  return fabs(getChsVlc_Left()) + fabs(getChsVlc_Right()) < 10;
+}
 #endif

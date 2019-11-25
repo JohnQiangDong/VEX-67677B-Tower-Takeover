@@ -2,17 +2,16 @@
 #define BS_H
 
 #include "vex.h"
-#include "automove.h"
 #include "utils.h"
 #include "ctrls.h"
 
 int cube_position()
 {
   handsSpin(vex::directionType::fwd, 80, 1.6);
-  vex::task::sleep(700);
+  vex::task::sleep(1000);
   handsStop(vex::brakeType::hold, 0.1);
   handsSpin(vex::directionType::rev, 60, 1.6);
-  vex::task::sleep(300);
+  vex::task::sleep(280);
   handsStop(vex::brakeType::hold, 0.1);
   return 0;
 }
@@ -22,12 +21,12 @@ int push_in_auto() // > 3s
   motorSpin(push,vex::directionType::rev,40,2.2);
   vex::task::sleep(300);
   motorStop(push,brakeType::hold,0.2);
-  vex::task::sleep(1000);
+  vex::task::sleep(600);
   push.resetRotation();
   double t = Brain.timer(vex::timeUnits::msec);
   
   while (push_flag && (Brain.timer(vex::timeUnits::msec) - t) < 3500) { // 2-3s
-    push_err = 790 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
+    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
     // pushing multi-layer control
     if (push_err < 10) // break
@@ -87,7 +86,7 @@ int start_arm_push()
   motorSpin(arm, vex::directionType::rev, 60, 2.2);
   vex::task::sleep(300);
   motorStop(arm, brakeType::hold, 0.1);
-  vex::task::sleep(230);
+  vex::task::sleep(225);
   motorStop(push, brakeType::coast, 0.1);
 
   return 0;
@@ -103,7 +102,7 @@ int push_up()
   return 0;
 }
 
-void bs_new(){
+void auto_bs(){
 
   // hold the position of arm and push
   /*task ArmPushStart(start_arm_push);
@@ -128,12 +127,12 @@ void bs_new(){
   task ArmPushStart(start_arm_push);
   handsSpin(fwd, 100, 2.2);  
   chsSpin(6000, 6000);
-  task::sleep(200);
+  task::sleep(200);//200
   moveTarget(170, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
-  moveTarget(540, 30, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  moveTarget(555, 28, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
-  moveTarget(45,100,false,brake,3,0.01,0.2);
-  moveTarget(140,100,true,hold,0.3,0.01,0.3);
+  moveTarget(45,100,false, brakeType::brake,3,0.01,0.2);
+  moveTarget(160,100,true, brakeType::hold,0.3,0.01,0.3);
 
   gyro_1.startCalibration();
   while(gyro_1.isCalibrating());
@@ -153,8 +152,8 @@ void bs_new(){
 
   //moveTarget(250,100,true, vex::brakeType::coast, 0.3, 0.01, 0.3);
   //moveTarget(250,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
-  moveTarget_LR(335, 285, 100, brakeType::coast, 0.3, 0.01, 0.3);
-  moveTarget_LR(325, 225, 60, brakeType::coast, 0.2, 0.01, 0.3);
+  moveTarget_LR(390, 280, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(350, 240, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
 
   //moveTarget(90,30,true, vex::brakeType::coast, 0.4, 0, 0.3);
   chsSpin(4000, 2000);
@@ -171,7 +170,7 @@ void bs_new(){
 
     task::sleep(50);
   }
-  moveTarget(-300, 60, true, brakeType::brake, 0.01, 0.01, 0.7);
+  moveTarget(-300, 60, true, brakeType::brake, 0.1, 0.01, 0.7);
 }
 
 void test()
@@ -187,6 +186,21 @@ void test()
   // turnTarget(-105, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
 
   // moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
+  chsSpin(-6000, -6000);
+  task::sleep(200);
+  moveTarget_LR_PCT(-223,-136,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget_LR_PCT(-95,-45,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget(-220,100,true,brakeType::coast,3,0.01,0.3);
+  moveTarget_LR_PCT(-100,-380,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget_LR_PCT(-80,-150,100,brakeType::coast,2, 0.01, 0.1);
+
+  // moveTarget_LR(-223,-136,100,brakeType::coast,3, 0.3, 0.01, 0.1);
+  // moveTarget_LR(-95,-45,100,brakeType::coast,3, 3, 0.01, 0.1);
+  // moveTarget(-220,100,true,brakeType::coast,3,0.01,0.3);
+  // moveTarget_LR(-100,-380,100,brakeType::coast,0.3, 3, 0.01, 0.1);
+  // moveTarget_LR(-80,-150,100,brakeType::coast,0.5, 0.5, 0.01, 0.1);
+  chsSpin(-3000, -3000);
+  task::sleep(300);
 }
 
 #endif

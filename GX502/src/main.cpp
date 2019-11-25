@@ -39,8 +39,7 @@ void pre_auton(void)
 
 void autonomous() 
 {
-  test();
-  // bs_new(); 
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -52,8 +51,8 @@ void autonomous()
 void usercontrol(void) 
 {
   //secret();
-  //test();
-  bs_new();
+  test();
+  //auto_rs();
   while (true) 
   {
     moving();
