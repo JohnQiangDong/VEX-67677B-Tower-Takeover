@@ -5,7 +5,8 @@
 #include "automove.h"
 #include "utils.h"
 #include "ctrls.h"
-int cubeposition()
+
+int cube_position()
 {
   handsSpin(vex::directionType::fwd, 80, 1.6);
   vex::task::sleep(700);
@@ -16,7 +17,7 @@ int cubeposition()
   return 0;
 }
 
-int PushInAuto() // > 3s
+int push_in_auto() // > 3s
 {
   motorSpin(push,vex::directionType::rev,40,2.2);
   vex::task::sleep(300);
@@ -71,6 +72,7 @@ int PushInAuto() // > 3s
   vex::task::sleep(700);
   return 0;
 }
+
 int start_hand()
 {
   vex::task::sleep(200);
@@ -90,6 +92,7 @@ int start_arm_push()
 
   return 0;
 }
+
 int push_up()
 {
   motorSpin(push, vex::directionType::fwd, 80, 2.2);
@@ -99,20 +102,7 @@ int push_up()
   motorStop(push, brakeType::hold, 0.1);
   return 0;
 }
-void test()
-{
-  gyro_1.startCalibration();
-  while(gyro_1.isCalibrating());
 
-  // moveTarget(300,80,false, vex::brakeType::brake,0.33,0.01,0.1); // +-1 error.
-  // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
-  // moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  // moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  // moveTarget(-300,65,false,hold,0.3,0.01,1.2); //large angle pid
-
-  // turnTarget(-105, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
-  moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
-}
 void bs_new(){
 
   // hold the position of arm and push
@@ -150,111 +140,53 @@ void bs_new(){
 
   handsStop(brakeType::hold,0.2);
   //moveTarget(-310,70,false,hold,0.2,0.01,3);
-  turnTarget(-140, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
-  task cube_position(cubeposition);
-  vexDelay(500);
+  turnTarget(-140, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  task CubePosition(cube_position);
+  task::sleep(500);
   //start pushing during moving towards scoring area   
   push_flag = true;
   push_hold = true;
-  task Push_In_Auto(PushInAuto);
+  task PushInAuto(push_in_auto);
+  // slow start moving
   chsSpin(6000, 6000);
   task::sleep(200);
+
   //moveTarget(250,100,true, vex::brakeType::coast, 0.3, 0.01, 0.3);
   //moveTarget(250,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
   moveTarget_LR(335, 285, 100, brakeType::coast, 0.3, 0.01, 0.3);
   moveTarget_LR(325, 225, 60, brakeType::coast, 0.2, 0.01, 0.3);
-  Brain.Screen.printAt(10, 50, "break");
-  
-  moveTarget(90,30,true, vex::brakeType::coast, 0.4, 0, 0.3);
+
+  //moveTarget(90,30,true, vex::brakeType::coast, 0.4, 0, 0.3);
+  chsSpin(4000, 2000);
+  task::sleep(500);
+  chsSpin(2000, 4000);
+  task::sleep(500);
+  chsStops(brakeType::coast, 0.2);
   task::sleep(500);
   chsStops(brakeType::hold, 0.2);
+
   while(push_hold)
   {
     Brain.Screen.printAt(10, 50, "not break");
 
     task::sleep(50);
   }
-  moveTarget(-300,60,true,brakeType::brake,0.01,0.01,0.4);
+  moveTarget(-300, 60, true, brakeType::brake, 0.01, 0.01, 0.7);
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-
-void auto_bs()
+void test()
 {
-  /*
-  push.spin(directionType ::fwd,50,velocityUnits::pct);
-  push.setMaxTorque(1.0, currentUnits:: amp);
-  
-  arm.spin (directionType::fwd,100,vex::velocityUnits::pct);
-  chsSpin(3000,3000);
-  vexDelay(700);
-  left_1.stop(vex::brakeType::hold);
-  left_2.stop(vex::brakeType::hold);
-  right_1.stop(vex::brakeType::hold);
-  right_2.stop(vex::brakeType::hold);
-  push.spin(directionType ::fwd,-50,velocityUnits::pct);
-  arm.spin(directionType::rev,100,vex::velocityUnits::pct);
-  chsSpin(-4000,-4000);
-  vexDelay(750);
-  push.stop();
-  left_1.stop(vex::brakeType::hold);
-  left_2.stop(vex::brakeType::hold);
-  right_1.stop(vex::brakeType::hold);
-  right_2.stop(vex::brakeType::hold);
-  arm.stop(brakeType::hold);
+  // moveTarget(300,80,false, vex::brakeType::brake,0.33,0.01,0.1); // +-1 error.
+  // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
+  // moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  // moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  // moveTarget(-300,65,false,hold,0.3,0.01,1.2); //large angle pid
 
-  arm.setMaxTorque(0.2, currentUnits::amp);hand1.spin(directionType::fwd,100,vex::velocityUnits::pct);
-  */
-  vexDelay(2000);
-  arm.spin(directionType::rev, 5, vex::velocityUnits::pct);
-  arm.setMaxTorque(0.4, currentUnits::amp);
-  push.stop(brakeType::hold);
-  push.setMaxTorque(0.2, currentUnits::amp);
-  hand1.spin(directionType::fwd, 100, vex::velocityUnits::pct);
-  hand2.spin(directionType::rev, 100, vex::velocityUnits::pct);
-  //collect frist 3 cubes
-  automove(830, 830, 6000, 4000);
+  // gyro_1.startCalibration();
+  // while(gyro_1.isCalibrating());
+  // turnTarget(-105, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
 
-  hand1.stop(vex::brakeType::hold);
-  hand2.stop(vex::brakeType::hold);
-
-  hand1.setMaxTorque(0.1, currentUnits::amp);
-  hand2.setMaxTorque(0.1, currentUnits::amp);
-  //stop hand
-  automove(190, -190, 2000, 14000);
-  autoturn(-865, -865, 3000, 14000);
-  //go back
-  automove(-180, 180, 2000, 14000);
-  //automove(-200,-200,2000,10000);
-
-  //start to collect another four cubes
-  hand1.setMaxTorque(2.4, currentUnits::amp);
-  hand2.setMaxTorque(2.4, currentUnits::amp);
-  hand1.spin(directionType::fwd, 100, vex::velocityUnits::pct);
-  hand2.spin(directionType::rev, 100, vex::velocityUnits::pct);
-  automove(1200, 1200, 7000, 3500);
-  vexDelay(70);
-  //dalay for get cube at right position
-  hand1.stop(vex::brakeType::hold);
-  hand2.stop(vex::brakeType::hold);
-  hand1.setMaxTorque(0.1, currentUnits::amp);
-  hand2.setMaxTorque(0.1, currentUnits::amp);
-  automove(-705, -705, 2000, 14000);
-  automove(-420, 420, 1000, 9900);
-  automove(400, 400, 4000, 6000);
-
-  push.setMaxTorque(2.4, currentUnits::amp);
-  push.spin(vex::directionType::fwd, 43, vex::velocityUnits::pct);
-  vexDelay(1740);
-  push.stop(brakeType::coast);
-  hand1.spin(directionType::rev, 100, vex::velocityUnits::pct);
-  hand2.spin(directionType::fwd, 100, vex::velocityUnits::pct);
-  vexDelay(100); //prevent hand stucking cubes
-
-  automove(-200, -200, 1000, 14000);
-  hand1.stop(vex::brakeType::hold);
-  hand2.stop(vex::brakeType::hold);
-  hand1.setMaxTorque(0.1, currentUnits::amp);
-  hand2.setMaxTorque(0.1, currentUnits::amp);
+  // moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
 }
+
 #endif
