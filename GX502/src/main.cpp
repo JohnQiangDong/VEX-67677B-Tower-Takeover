@@ -39,8 +39,8 @@ void pre_auton(void)
 
 void autonomous() 
 {
-  // test();
-  bs_new(); 
+  test();
+  // bs_new(); 
 }
 
 /*---------------------------------------------------------------------------*/
@@ -52,8 +52,8 @@ void autonomous()
 void usercontrol(void) 
 {
   //secret();
-  //bs_new();
   //test();
+  bs_new();
   while (true) 
   {
     moving();
@@ -71,13 +71,6 @@ void usercontrol(void)
 
 int main() 
 {
-  gyro_1.startCalibration();
-  while(gyro_1.isCalibrating())
-  {
-    vex::task::sleep(100);
-  }
-  task CalGyro(calcGyro);
-
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);

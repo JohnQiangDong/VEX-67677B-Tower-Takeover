@@ -8,32 +8,35 @@
 int cubeposition()
 {
   handsSpin(vex::directionType::fwd, 80, 1.6);
-  vex::task::sleep(500);
-  handsStop(vex::brakeType::coast, 0.1);
-  handsSpin(vex::directionType::rev, 80, 1.6);
-  vex::task::sleep(350);
-  handsStop(vex::brakeType::coast, 0.1);
+  vex::task::sleep(700);
+  handsStop(vex::brakeType::hold, 0.1);
+  handsSpin(vex::directionType::rev, 60, 1.6);
+  vex::task::sleep(300);
+  handsStop(vex::brakeType::hold, 0.1);
   return 0;
 }
 
-int PushInAuto() 
+int PushInAuto() // > 3s
 {
-  vex::task::sleep(1300);
+  motorSpin(push,vex::directionType::rev,40,2.2);
+  vex::task::sleep(300);
+  motorStop(push,brakeType::hold,0.2);
+  vex::task::sleep(1000);
   push.resetRotation();
-  while (push_flag) {
-    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
+  double t = Brain.timer(vex::timeUnits::msec);
+  
+  while (push_flag && (Brain.timer(vex::timeUnits::msec) - t) < 3500) { // 2-3s
+    push_err = 790 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
-
     // pushing multi-layer control
     if (push_err < 10) // break
     {
       push_flag = false;
-      push_hold = false;
     } 
     else if (push_err < 100) // PID control
     {
       sum_err += push_err * 0.1;
-      output = 17 + push_err * 0.1 - push_vlc * 0.4 + sum_err * 0.08;
+      output = 17 + push_err * 0.1 - push_vlc * 0.4 + sum_err * 0.2;
     }
     else if (push_err < 180) // PID control
     {
@@ -61,13 +64,11 @@ int PushInAuto()
     vex::task::sleep(100);
   }
   motorStop(push, vex::brakeType ::hold, 0.2);
-  push_hold = true;
   handsSpin(vex::directionType::rev, 80, 1.6);
   vex::task::sleep(100);
   handsStop(vex::brakeType::coast, 0.1);
   push_hold = false;
   vex::task::sleep(700);
-  moveTarget(-300,60,true,brakeType::coast,0.01,0.01,0.4);
   return 0;
 }
 int start_hand()
@@ -98,16 +99,22 @@ int push_up()
   motorStop(push, brakeType::hold, 0.1);
   return 0;
 }
-void test(){
+void test()
+{
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating());
+
   // moveTarget(300,80,false, vex::brakeType::brake,0.33,0.01,0.1); // +-1 error.
   // moveTarget(340,100,false, vex::brakeType::brake,0.3,0.01,0.1); // +-1 error. 90 deg
-  //moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  //moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
-  //moveTarget(-300,65,false,hold,0.3,0.01,1.2); //large angle pid
-  turnTarget(300, 50, vex::brakeType::brake, 0.3, 0.01,0.1);
-//////
+  // moveTarget(100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  // moveTarget(-100,100,false, vex::brakeType::brake,2,0.01,0.1); // +-10 error. 40 deg
+  // moveTarget(-300,65,false,hold,0.3,0.01,1.2); //large angle pid
+
+  // turnTarget(-105, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
 }
 void bs_new(){
+
   // hold the position of arm and push
   /*task ArmPushStart(start_arm_push);
   moveTarget(250, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
@@ -129,26 +136,43 @@ void bs_new(){
   
   //move forward and collect 4 cubes
   task ArmPushStart(start_arm_push);
-  motorSpin(hand1,fwd,81,2.2);
-  motorSpin(hand2,fwd,81,2.2);
-  moveTarget(830, 30,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  handsSpin(fwd, 100, 2.2);  
+  chsSpin(6000, 6000);
+  task::sleep(200);
+  moveTarget(170, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
+  moveTarget(540, 30, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
-  moveTarget(50,100,false,brake,3,0.01,0.2);
-  moveTarget(120,100,true,hold,0.3,0.01,0.3);
-  vexDelay(1000);
-  motorStop(hand1,brakeType::hold,0.2);
-  motorStop(hand2,brakeType::hold,0.2);
-  //turn right
-  handsStop(vex::brakeType::coast, 0.1);
-  moveTarget(-310,70,false,hold,0.2,0.01,3);
-  //task cube_position(cubeposition);
+  moveTarget(45,100,false,brake,3,0.01,0.2);
+  moveTarget(140,100,true,hold,0.3,0.01,0.3);
+
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating());
+
+  handsStop(brakeType::hold,0.2);
+  //moveTarget(-310,70,false,hold,0.2,0.01,3);
+  turnTarget(-140, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  task cube_position(cubeposition);
   vexDelay(500);
   //start pushing during moving towards scoring area   
   push_flag = true;
-  //task Push_In_Auto(PushInAuto);
-  //moveTarget(550,55,true, vex::brakeType::brake, 0.3, 0.01, 0.3);
-  //moveTarget(220,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
-  //vexDelay(10000);
+  push_hold = true;
+  task Push_In_Auto(PushInAuto);
+  chsSpin(6000, 6000);
+  task::sleep(200);
+  //moveTarget(250,100,true, vex::brakeType::coast, 0.3, 0.01, 0.3);
+  //moveTarget(250,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
+  moveTarget_LR(300, 235, 100, brakeType::coast, 0.3, 0.01, 0.3);
+  moveTarget_LR(325, 225, 60, brakeType::coast, 0.2, 0.01, 0.3);
+  moveTarget(90,30,true, vex::brakeType::coast, 0.4, 0, 0.3);
+  task::sleep(500);
+  chsStops(brakeType::hold, 0.2);
+  while(push_hold)
+  {
+    Brain.Screen.printAt(10, 50, "not break");
+
+    task::sleep(50);
+  }
+  moveTarget(-300,60,true,brakeType::brake,0.01,0.01,0.4);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

@@ -227,7 +227,7 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt, double kp
     cof = -1;
   }
 
-  chsStop(vex::brakeType::brake);
+  if(bt != brakeType::coast) chsStop(vex::brakeType::brake);
   vex::task::sleep(50);
 
   PID pid = PID(0.1, ma, mi, kp, kd, ki);
@@ -273,7 +273,7 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double 
   PID pid_r = PID(0.1, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  while (cof * (tar_l - getChsRot_Left()) > 20 && cof * (tar_r - getChsRot_Right()) > 20)
+  while (cof * (tar_l - getChsRot_Left()) > 20 || cof * (tar_r - getChsRot_Right()) > 20)
   {
     double output_l = 130 * pid_l.calculate(tar_l, getChsRot_Left());
     double output_r = 130 * pid_r.calculate(tar_r, getChsRot_Right());
@@ -287,6 +287,10 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double 
 
   chsStop(bt);
 }
+
+/*----------------------------------------------------------------------------*/
+/*   PID Move Turn by Gyro
+/*----------------------------------------------------------------------------*/
 
 void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, double ki)
 {
@@ -302,28 +306,25 @@ void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd, d
   chsStop(vex::brakeType::brake);
   vex::task::sleep(50);
 
-  PID pid = PID(0.1, ma, mi, kp, kd, ki);
-  gyro_1.calibrate(50);
-  
-  gyro_1.setHeading(0,rotationUnits::deg);
-  
+  PID pid = PID(0.05, ma, mi, kp, kd, ki);
+  gyro_1.setHeading(0, vex::rotationUnits::deg); 
 
-  while (cof * (tar - gyro_1.heading(rotationUnits::deg)) > 10)
+  while (cof * (tar - gyro_deg) > 5)
   {
-    double output = pid.calculate(tar, gyro_1.heading(rotationUnits::deg));
-    Brain.Screen.printAt(10, 10, "err is %.2f", tar - gyro_1.heading(rotationUnits::deg));
+    double output = pid.calculate(tar, gyro_deg);
+    Brain.Screen.printAt(10, 20, "err is %.2f", cof * (tar - gyro_deg));
     Brain.Screen.printAt(10, 50, "opt is %.2f", output);
     
     moveCtrl(0, output);
 
-    vex::task::sleep(100);
+    vex::task::sleep(50);
   }
 
-  chsStop(bt);
+  chsStops(bt, 2.2);
 
   // while (true)
   // {
-  //   Brain.Screen.printAt(10, 10, "err is %.2f", tar - getChsRot(fwd_tur));
+  //   Brain.Screen.printAt(10, 10, "err is %.2f", tar - gyro_deg);
   //   vex::task::sleep(100);
   // }
 }
@@ -343,5 +344,4 @@ void secret()
     vex::task::sleep(1000);
   }
 }
-
 #endif
