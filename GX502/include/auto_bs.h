@@ -161,8 +161,10 @@ void bs_new(){
   task::sleep(200);
   //moveTarget(250,100,true, vex::brakeType::coast, 0.3, 0.01, 0.3);
   //moveTarget(250,60,true, vex::brakeType::coast, 0.2, 0, 0.3);
-  moveTarget_LR(300, 235, 100, brakeType::coast, 0.3, 0.01, 0.3);
+  moveTarget_LR(335, 285, 100, brakeType::coast, 0.3, 0.01, 0.3);
   moveTarget_LR(325, 225, 60, brakeType::coast, 0.2, 0.01, 0.3);
+  Brain.Screen.printAt(10, 50, "break");
+  
   moveTarget(90,30,true, vex::brakeType::coast, 0.4, 0, 0.3);
   task::sleep(500);
   chsStops(brakeType::hold, 0.2);
