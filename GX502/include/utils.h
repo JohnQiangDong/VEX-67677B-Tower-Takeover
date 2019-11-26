@@ -40,6 +40,14 @@ void chsStops(vex::brakeType bt, double mt)
   motorStop(right_2, bt, mt);
 }
 
+void chsSetBT(brakeType bt)
+{
+  left_1.setBrake(bt);
+  left_2.setBrake(bt);
+  right_1.setBrake(bt);
+  right_2.setBrake(bt);
+}
+
 void chsSpin(double left_vot, double right_vot)
 {
   left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);

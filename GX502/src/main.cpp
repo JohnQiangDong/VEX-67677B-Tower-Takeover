@@ -51,8 +51,8 @@ void autonomous()
 void usercontrol(void) 
 {
   //secret();
-  test();
-  //auto_rs();
+  // test();
+  auto_rs();
   while (true) 
   {
     moving();

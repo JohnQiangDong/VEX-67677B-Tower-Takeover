@@ -186,20 +186,23 @@ void test()
   // turnTarget(-105, 100, vex::brakeType::brake, 5, 0.1, 0.1); // 200 deg
 
   // moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
+
   chsSpin(-6000, -6000);
   task::sleep(200);
-  moveTarget_LR_PCT(-223,-136,100,brakeType::coast,2, 0.01, 0.1);
-  moveTarget_LR_PCT(-95,-45,100,brakeType::coast,2, 0.01, 0.1);
-  moveTarget(-220,100,true,brakeType::coast,3,0.01,0.3);
-  moveTarget_LR_PCT(-100,-380,100,brakeType::coast,2, 0.01, 0.1);
-  moveTarget_LR_PCT(-80,-150,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget_LR_PCT(-235,-140,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget_LR_PCT(-120,-50,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget(-45,80,true,brakeType::coast,5,0.01,0.3);
+  moveTarget_LR_PCT(-50,-260,100,brakeType::coast,3, 0.01, 0.1);
+  moveTarget_LR_PCT(-5,-300,100,brakeType::coast,3, 0.01, 0.1);
+  moveTarget_LR_PCT(-1,-150,100,brakeType::brake,3, 0.01, 0.1);
+
 
   // moveTarget_LR(-223,-136,100,brakeType::coast,3, 0.3, 0.01, 0.1);
   // moveTarget_LR(-95,-45,100,brakeType::coast,3, 3, 0.01, 0.1);
   // moveTarget(-220,100,true,brakeType::coast,3,0.01,0.3);
   // moveTarget_LR(-100,-380,100,brakeType::coast,0.3, 3, 0.01, 0.1);
   // moveTarget_LR(-80,-150,100,brakeType::coast,0.5, 0.5, 0.01, 0.1);
-  chsSpin(-3000, -3000);
+  //chsSpin(-3000, -3000);
   task::sleep(300);
 }
 

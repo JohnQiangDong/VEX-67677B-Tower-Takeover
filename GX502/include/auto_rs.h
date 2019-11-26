@@ -79,7 +79,6 @@ int push_in_auto_rs() // > 3s
 
 int start_hand_rs()
 {
-  vex::task::sleep(200);
   handsSpin(vex::directionType::fwd, 100, 1.6);
 
   return 0;
@@ -111,10 +110,10 @@ void auto_rs(){
 
   // hold the position of arm and push
   task ArmPushStart(start_arm_push_rs);
-  moveTarget(250, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
+  moveTarget(250, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   // start the robot and sprawl
   task HandStart(start_hand_rs);
-  moveTarget(-290,100, true, vex::brakeType::coast, 0.3, 0.01, 0.3); //back to reduce error
+  moveTarget(-270,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
   // move forward get pre-loaded cube and 3 other cubes
   task PushUp(push_up_rs);
   task ArmPosition(arm_position_rs);
@@ -122,50 +121,57 @@ void auto_rs(){
   vex::task::sleep(500);  
   handsStop(brakeType::hold, 0.1);
 
-  // s motion
-  
+  chsSpin(-6000, -6000);
+  task::sleep(200);
+  moveTarget_LR_PCT(-230,-140,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget_LR_PCT(-120,-50,100,brakeType::coast,2, 0.01, 0.1);
+  moveTarget(-45,80,true,brakeType::coast,5,0.01,0.3);
+  moveTarget_LR_PCT(-50,-260,100,brakeType::coast,3, 0.01, 0.1);
+  moveTarget_LR_PCT(-5,-300,100,brakeType::coast,3, 0.01, 0.1);
+  moveTarget_LR_PCT(-1,-150,100,brakeType::brake,3, 0.01, 0.1);
+
   //move forward and collect 4 cubes
-//   task ArmPushStart(start_arm_push_rs);
-//   handsSpin(fwd, 100, 2.2);  
-//   chsSpin(5800, 5800);
-//   task::sleep(200);//200
-//   moveTarget(165, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
-//   moveTarget(555, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
-//   //turn left and collect 1 cube (optional)
-//   moveTarget(-48,100,false, brakeType::brake,3,0.01,0.2);
-//   moveTarget(170,90,true, brakeType::hold,0.3,0.01,0.3);
+  task ArmPushStartRS(start_arm_push_rs);
+  handsSpin(fwd, 100, 2.2);  
+  chsSpin(5800, 5800);
+  task::sleep(200);//200
+  moveTarget(165, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
+  moveTarget(555, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  //turn left and collect 1 cube (optional)
+  moveTarget(-48,100,false, brakeType::brake,3,0.01,0.2);
+  moveTarget(170,90,true, brakeType::hold,0.3,0.01,0.3);
 
-//   gyro_1.startCalibration();
-//   while(gyro_1.isCalibrating());
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating());
 
-//   handsStop(brakeType::hold,0.2);
-//   //moveTarget(-310,70,false,hold,0.2,0.01,3);
-//   turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
-//   task CubePosition(cube_position_rs);
-//   task::sleep(500);
-//   //start pushing during moving towards scoring area   
-//   push_flag = true;
-//   push_hold = true;
-//   task PushInAuto(push_in_auto_rs);
-//   // slow start moving
-//   chsSpin(6000, 6000);
-//   task::sleep(300);
-//   moveTarget_LR(300, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
-//   moveTarget_LR(240, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
-//   chsSpin(4000, 2000);
-//   task::sleep(500);
-//   chsSpin(2000, 4000);
-//   task::sleep(500);
-//   chsStops(brakeType::coast, 0.2);
-//   task::sleep(500);
-//   chsStops(brakeType::hold, 0.2);
+  handsStop(brakeType::hold,0.2);
+  //moveTarget(-310,70,false,hold,0.2,0.01,3);
+  turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  task CubePosition(cube_position_rs);
+  task::sleep(500);
+  //start pushing during moving towards scoring area   
+  push_flag = true;
+  push_hold = true;
+  task PushInAuto(push_in_auto_rs);
+  // slow start moving
+  chsSpin(6000, 6000);
+  task::sleep(300);
+  moveTarget_LR(300, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(240, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  chsSpin(4000, 2000);
+  task::sleep(500);
+  chsSpin(2000, 4000);
+  task::sleep(500);
+  chsStops(brakeType::coast, 0.2);
+  task::sleep(500);
+  chsStops(brakeType::hold, 0.2);
 
-//   while(push_hold)
-//   {
-//     Brain.Screen.printAt(10, 50, "not break");
+  while(push_hold)
+  {
+    Brain.Screen.printAt(10, 50, "not break");
 
-//     task::sleep(50);
-//   }
-//   moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
+    task::sleep(50);
+  }
+  moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
 }
 #endif

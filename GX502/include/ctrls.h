@@ -218,6 +218,8 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt,
     cof = -1;
   }
 
+  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
+
   PID pid = PID(0.05, ma, mi, kp, kd, ki);
   resetChsRot();
 
@@ -230,7 +232,7 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt,
 
     double output = pid.calculate(tar, getChsRot(fwd_tur));
     Brain.Screen.printAt(10, 20, "err is %.2f", tar - getChsRot(fwd_tur));
-    Brain.Screen.printAt(10, 50, "opt is %.2f", output);
+    Brain.Screen.printAt(10, 40, "opt is %.2f", output);
 
     if (fwd_tur)
       moveCtrl(output, 0);
@@ -240,8 +242,8 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt,
     vex::task::sleep(50);
   }
 
-  if (bt == brakeType::coast)
-    return;
+  if (bt == brakeType::coast) return;
+
   chsStop(bt);
   while (!isChsStop())
     task::sleep(10);
@@ -264,6 +266,8 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt,
     mi = -max_pct;
     cof = -1;
   }
+
+  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
 
   PID pid_l = PID(0.05, ma, mi, kp, kd, ki);
   PID pid_r = PID(0.05, ma, mi, kp, kd, ki);
@@ -297,40 +301,43 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt,
 void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double kp, double kd, double ki) 
 {
   if (tar_l * tar_r < 0) return; // tar_l and tar_r must be in same driection.
-  int ma = max_pct, mi = 0, cof = 1, count = 20, tar = fmin(tar_l, tar_r);
+  int ma = max_pct, mi = 0, cof = 1, count = 20, tar = fmax(tar_l, tar_r);
   if (tar_l < 0 && tar_r < 0) {
     ma = 0;
     mi = -max_pct;
     cof = -1;
-    tar = fmax(tar_l, tar_r);
+    tar = fmin(tar_l, tar_r);
   }
+
+  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
 
   PID pid = PID(0.05, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  if (tar == tar_l) {
+  if (tar == tar_l) 
+  {
     while (cof * (tar - getChsRot_Left()) > 20) 
     {
       if (isChsStop()) {
         if (count-- <= 0) break;
       } else count = 20;
 
-      double output = 130 * pid.calculate(tar_l, getChsRot_Left());
+      double output = 130 * pid.calculate(tar, getChsRot_Left());
 
       chsSpin(output, output * (tar_r / tar_l));
 
       vex::task::sleep(50);
     }
   } 
-  else 
+  else
   {
-    while (cof * (tar - getChsRot_Right() > 20))
+    while (cof * (tar - getChsRot_Right()) > 20) 
     {
       if (isChsStop()) {
         if (count-- <= 0) break;
       } else count = 20;
 
-      double output = 130 * pid.calculate(tar_l, getChsRot_Left());
+      double output = 130 * pid.calculate(tar, getChsRot_Right());
 
       chsSpin(output * (tar_l / tar_r), output);
 
