@@ -9,6 +9,7 @@
 
 #include "auto_bs.h"
 #include "auto_rs.h"
+#include "auto_bd.h"
 
 #include "ctrls.h"
 
@@ -24,9 +25,27 @@
 /*  function is only called once after the cortex has been powered on and    */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
+int choose = 0;
 void pre_auton(void) 
 {
+  /*double t;
+  while(true){
+    if (bumper_choose){
+     t = Brain.timer(vex::timeUnits::msec);
+     choose += 1;
+       if(choose == 5) choose = 1;
+    }
+    switch(choose)
+    {
+      case 1:Brain.Screen.printAt(  10, 220, "BS");
+      case 2:Brain.Screen.printAt(  10, 220, "RS");
+      case 3:Brain.Screen.printAt(  10, 220, "RB");
+      case 4:Brain.Screen.printAt(  10, 220, "BB");
+    }
+    if(fabs(t - Brain.timer(vex::timeUnits::msec)) < 500){
+       if(bumper_choose)break;
+    }
+  }*/
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -39,7 +58,14 @@ void pre_auton(void)
 
 void autonomous() 
 {
-
+   /* switch(choose)
+    {
+      case 1:Brain.Screen.printAt(  10, 220, "BS");
+      case 2:Brain.Screen.printAt(  10, 220, "RS");
+      case 3:Brain.Screen.printAt(  10, 220, "RB");
+      case 4:Brain.Screen.printAt(  10, 220, "BB");
+    }*/
+    auto_bd();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -52,7 +78,8 @@ void usercontrol(void)
 {
   //secret();
   // test();
-  auto_rs();
+  //auto_bd();
+  chsStops(brakeType::coast,2.2);
   while (true) 
   {
     moving();

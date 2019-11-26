@@ -16,7 +16,7 @@ int cube_position_rs()
   vex::task::sleep(1000);
   handsStop(vex::brakeType::hold, 0.1);
   handsSpin(vex::directionType::rev, 60, 1.6);
-  vex::task::sleep(280);
+  vex::task::sleep(350);
   handsStop(vex::brakeType::hold, 0.1);
   return 0;
 }
@@ -79,6 +79,7 @@ int push_in_auto_rs() // > 3s
 
 int start_hand_rs()
 {
+  vex::task::sleep(100);
   handsSpin(vex::directionType::fwd, 100, 1.6);
 
   return 0;
@@ -98,6 +99,7 @@ int start_arm_push_rs()
 
 int push_up_rs()
 {
+  vex::task::sleep(600);
   motorSpin(push, vex::directionType::fwd, 80, 2.2);
   vex::task::sleep(400);
   motorSpin(push, vex::directionType::rev, 100, 2.2);
@@ -145,8 +147,7 @@ void auto_rs(){
   while(gyro_1.isCalibrating());
 
   handsStop(brakeType::hold,0.2);
-  //moveTarget(-310,70,false,hold,0.2,0.01,3);
-  turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 140 deg
   task CubePosition(cube_position_rs);
   task::sleep(500);
   //start pushing during moving towards scoring area   
@@ -158,6 +159,59 @@ void auto_rs(){
   task::sleep(300);
   moveTarget_LR(300, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
   moveTarget_LR(240, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  chsSpin(4000, 2000);
+  task::sleep(500);
+  chsSpin(2000, 4000);
+  task::sleep(500);
+  chsStops(brakeType::coast, 0.2);
+  task::sleep(500);
+  chsStops(brakeType::hold, 0.2);
+
+  while(push_hold)
+  {
+    Brain.Screen.printAt(10, 50, "not break");
+
+    task::sleep(50);
+  }
+  moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
+}
+
+void rs_six(){
+  // hold the position of arm and push
+  task ArmPushStart(start_arm_push_rs);
+  moveTarget(190, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
+  // start the robot and sprawl
+  task HandStart(start_hand_rs);
+  moveTarget(-210,60, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
+  // move forward get pre-loaded cube and 3 other cubes
+  task PushUp(push_up_rs);
+  vexDelay(1500);
+  handsSpin(fwd, 100, 2.2);  
+  chsSpin(6000, 6000);
+  task::sleep(200);//200
+  moveTarget(165, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
+  moveTarget(555, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  //turn left and collect 1 cube (optional)
+  moveTarget(-54,100,false, brakeType::brake,3,0.01,0.2);
+  moveTarget(175,90,true, brakeType::hold,0.3,0.01,0.3);
+
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating());
+
+  handsStop(brakeType::hold,0.2);
+  //moveTarget(-310,70,false,hold,0.2,0.01,3);
+  turnTarget(150, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  task CubePosition(cube_position_rs);
+  task::sleep(500);
+  //start pushing during moving towards scoring area   
+  push_flag = true;
+  push_hold = true;
+  task PushInAuto(push_in_auto_rs);
+  // slow start moving
+  chsSpin(6000, 6000);
+  task::sleep(300);
+  moveTarget_LR(360, 510, 90, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(280, 340, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
   chsSpin(4000, 2000);
   task::sleep(500);
   chsSpin(2000, 4000);
