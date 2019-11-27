@@ -183,14 +183,24 @@ void test()
 
   // moveTarget_LR(600, 500, 100, brakeType::coast, 0.3, 0.01, 0.1);
 
-  chsSpin(-6000, -6000);
-  task::sleep(200);
-  moveTarget_LR_PCT(-235,-140,100,brakeType::coast,2, 0.01, 0.1);
-  moveTarget_LR_PCT(-120,-50,100,brakeType::coast,2, 0.01, 0.1);
-  moveTarget(-45,80,true,brakeType::coast,5,0.01,0.3);
-  moveTarget_LR_PCT(-50,-260,100,brakeType::coast,3, 0.01, 0.1);
-  moveTarget_LR_PCT(-5,-300,100,brakeType::coast,3, 0.01, 0.1);
-  moveTarget_LR_PCT(-1,-150,100,brakeType::brake,3, 0.01, 0.1);
+  // chsSpin(-6000, -6000);
+  // task::sleep(200);
+  // moveTarget_LR_PCT(-235,-140,100,brakeType::coast,2, 0.01, 0.1);
+  // moveTarget_LR_PCT(-120,-50,100,brakeType::coast,2, 0.01, 0.1);
+  // moveTarget(-45,80,true,brakeType::coast,5,0.01,0.3);
+  // moveTarget_LR_PCT(-50,-260,100,brakeType::coast,3, 0.01, 0.1);
+  // moveTarget_LR_PCT(-5,-300,100,brakeType::coast,3, 0.01, 0.1);
+  // moveTarget_LR_PCT(-1,-150,100,brakeType::brake,3, 0.01, 0.1);
+
+  gyro_1.startCalibration();
+  while(gyro_1.isCalibrating());
+  for(int i = 0; i < 5; i++)
+  {
+    turnTarget(-95, 100, vex::brakeType::brake, 3, 0.03,0.1);//150
+    task::sleep(1000);
+    turnTarget(+95, 100, vex::brakeType::brake, 3, 0.03,0.1);//150
+    task::sleep(1000);
+  }
 
 
   // moveTarget_LR(-223,-136,100,brakeType::coast,3, 0.3, 0.01, 0.1);

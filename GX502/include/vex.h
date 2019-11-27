@@ -22,10 +22,10 @@ vex::motor right_2(vex::PORT13, vex::gearSetting::ratio18_1, true);
 vex::motor left_1(vex::PORT15, vex::gearSetting::ratio18_1, true);
 vex::motor left_2(vex::PORT16, vex::gearSetting::ratio18_1, false);
 vex::motor arm(vex::PORT3, vex::gearSetting::ratio36_1, false);
-vex::motor hand1(vex::PORT20, vex::gearSetting::ratio36_1, true);
+vex::motor hand1(vex::PORT17, vex::gearSetting::ratio36_1, true);
 vex::motor hand2(vex::PORT2, vex::gearSetting::ratio36_1, false);
 vex::motor push(vex::PORT1, vex::gearSetting::ratio36_1, true);
-vex::bumper auto_choose(vex::bumper(Brain.ThreeWirePort.A));
+vex::bumper auto_choose(vex::bumper(Brain.ThreeWirePort.C));
 vex::gyro gyro_1 = vex::gyro(Brain.ThreeWirePort.B);
 vex::controller ctrler = vex::controller();
 

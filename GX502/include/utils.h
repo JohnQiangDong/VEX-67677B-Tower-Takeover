@@ -48,8 +48,12 @@ void chsSetBT(brakeType bt)
   right_2.setBrake(bt);
 }
 
-void chsSpin(double left_vot, double right_vot)
+void chsSpin(double left_vot, double right_vot, double mt = 2.2)
 {
+  left_1.setMaxTorque(mt, currentUnits::amp);
+  left_2.setMaxTorque(mt, currentUnits::amp);
+  right_1.setMaxTorque(mt, currentUnits::amp);
+  right_2.setMaxTorque(mt, currentUnits::amp);
   left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
   left_2.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
   right_1.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);

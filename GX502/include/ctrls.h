@@ -19,10 +19,8 @@ void moveCtrl(int c3, int c1) {
   if (abs(c3) < 10)
     c3 = 0;
   // rotate speed protecting
-  if (abs(c1) > 60)
-    ftr = 0.8;
-  else
-    ftr = 0.65;
+  ftr = abs(c1) > 60 ? 0.8 : 0.5;
+
   lv = c3 + c1 * ftr;
   rv = c3 - c1 * ftr;
 
@@ -40,7 +38,7 @@ void moveCtrl(int c3, int c1) {
   orv = getChsVlc_Right();
 
   if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7) {
-    chsStop(vex::brakeType::coast);
+    chsStops(vex::brakeType::coast, 0.2);
     return;
   } else if (lv * olv < 0 && rv * orv < 0) // both change direction
   {
@@ -68,7 +66,7 @@ void moveCtrl(int c3, int c1) {
 /*   Chassis Control
 /*----------------------------------------------------------------------------*/
 
-int smove_vot = 3000;
+int smove_vot = 4000;
 
 void moving() {
   if (btn_bck)
@@ -87,6 +85,7 @@ void moving() {
 /*   Collector Control
 /*----------------------------------------------------------------------------*/
 bool push_flag = false, push_hold = false;
+bool push_down=false ;
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 
 void handing() {
@@ -107,8 +106,7 @@ void handing() {
 void rasing() {
   if (btn_arm_up) {
     push_hold = false;
-    motorSpin(arm, vex::directionType::fwd, 80, 2.2);
-
+    motorSpin(arm, vex::directionType::fwd, 80, 2.4);
     if (fabs(push.rotation(rotationUnits::deg)) <
         300) // TODO: wating for testing.
       motorSpin(push, vex::directionType::fwd, 60, 2.4);
@@ -117,7 +115,19 @@ void rasing() {
     }
   } else if (btn_arm_dw) {
     push_hold = false;
-    motorSpin(arm, directionType::rev, 80, 2.2);
+    motorSpin(arm, directionType::rev, 80, 1.6);
+    if (fabs(arm.rotation(rotationUnits::deg))<400){
+      motorSpin(push, vex::directionType::rev, 77, 1.2);
+    }
+    //cancle out erro(fabs<20) in rotation
+    if (fabs(arm.rotation(rotationUnits::deg)) <
+        16) {
+          arm.resetRotation();
+        }
+        if (fabs(push.rotation(rotationUnits::deg)) <
+        20) {
+          push.resetRotation();
+        }
   } else if (!push_hold) {
     motorStop(arm, brakeType::hold, 0.1);
   }
@@ -126,6 +136,21 @@ void rasing() {
 /*----------------------------------------------------------------------------*/
 /*   Auto Push Task
 /*----------------------------------------------------------------------------*/
+/*int autoPushDown(){
+  int waittime=0;
+  while(waittime>10){
+    push_down = true;
+    if(fabs(push.rotation(rotationUnits::deg))>550){
+      motorSpin(push,directionType::rev,50,0.5);
+    }
+    if(push.velocity(pct)<10){
+      motorStop(push, vex::brakeType::coast, 0.2);
+      waittime++;
+    }
+    task::sleep(100);
+  }
+  return 0;
+}*/
 
 int autoPush() {
   while (push_flag) {
@@ -197,6 +222,7 @@ void pushing() {
   } else if (btn_score_pull) {
     push_flag = false;
     push_hold = false;
+    /*task AutoPushDown(autoPushDown);*/
 
     motorSpin(push, vex::directionType::rev, 100, 2.2);
     push.resetRotation();
@@ -356,7 +382,7 @@ void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, dou
 
 void turnTarget(int tar, int max_pct, vex::brakeType bt, double kp, double kd,
                 double ki) {
-  int ma = max_pct, mi = 0, cof = 1, count = 20;
+  int ma = max_pct, mi = 0, cof = 1, count = 40;
 
   if (tar < 0) {
     ma = 0;

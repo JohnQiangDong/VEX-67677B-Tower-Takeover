@@ -7,9 +7,10 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#include "auto_bs.h"
-#include "auto_rs.h"
 #include "auto_bd.h"
+#include "auto_bs.h"
+#include "auto_rd.h"
+#include "auto_rs.h"
 
 #include "ctrls.h"
 
@@ -25,27 +26,56 @@
 /*  function is only called once after the cortex has been powered on and    */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-int choose = 0;
-void pre_auton(void) 
-{
-  /*double t;
-  while(true){
-    if (bumper_choose){
-     t = Brain.timer(vex::timeUnits::msec);
-     choose += 1;
-       if(choose == 5) choose = 1;
+int choose = 0, bk_count = 10;
+bool bk_flag = true;
+
+void pre_auton(void) {
+  while (bk_flag) {
+    bk_count = 10;
+    bk_flag = true;
+
+    if (bumper_choose) {
+      choose = choose % 4 + 1;
+      switch (choose) {
+      case 1:
+        Brain.Screen.printAt(10, 200, "Blue-Single       ");
+        break;
+      case 2:
+        Brain.Screen.printAt(10, 200, "Red-Single        ");
+        break;
+      case 3:
+        Brain.Screen.printAt(10, 200, "Red-Double        ");
+        break;
+      case 4:
+        Brain.Screen.printAt(10, 200, "Blue-Double       ");
+        break;
+      }
     }
-    switch(choose)
-    {
-      case 1:Brain.Screen.printAt(  10, 220, "BS");
-      case 2:Brain.Screen.printAt(  10, 220, "RS");
-      case 3:Brain.Screen.printAt(  10, 220, "RB");
-      case 4:Brain.Screen.printAt(  10, 220, "BB");
+
+    while (bumper_choose) {
+      if (bk_count-- <= 0) {
+        switch (--choose) {
+        case 1:
+          Brain.Screen.printAt(10, 200, "Blue-Single     ");
+          break;
+        case 2:
+          Brain.Screen.printAt(10, 200, "Red-Single      ");
+          break;
+        case 3:
+          Brain.Screen.printAt(10, 200, "Red-Double      ");
+          break;
+        case 4:
+          Brain.Screen.printAt(10, 200, "Blue-Double     ");
+          break;
+        }
+        Brain.Screen.printAt(10, 220, "Break             ");
+        bk_flag = false;
+        break;
+      }
+      task::sleep(100);
     }
-    if(fabs(t - Brain.timer(vex::timeUnits::msec)) < 500){
-       if(bumper_choose)break;
-    }
-  }*/
+    task::sleep(100);
+  }
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -56,16 +86,21 @@ void pre_auton(void)
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
 
-void autonomous() 
-{
-   /* switch(choose)
-    {
-      case 1:Brain.Screen.printAt(  10, 220, "BS");
-      case 2:Brain.Screen.printAt(  10, 220, "RS");
-      case 3:Brain.Screen.printAt(  10, 220, "RB");
-      case 4:Brain.Screen.printAt(  10, 220, "BB");
-    }*/
-    auto_bd();
+void autonomous() {
+  switch (choose) {
+    case 1:
+      bs_six();
+      break;
+    case 2:
+      rs_six();
+      break;
+    case 3:
+      auto_rd();
+      break;
+    case 4:
+      auto_bd();
+      break;
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -74,14 +109,10 @@ void autonomous()
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) 
-{
-  //secret();
-  // test();
-  //auto_bd();
-  chsStops(brakeType::coast,2.2);
-  while (true) 
-  {
+void usercontrol(void) {
+  auto_rd();
+
+  while (true) {
     moving();
     handing();
     pushing();
@@ -95,16 +126,15 @@ void usercontrol(void)
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-int main() 
-{
+int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   // Run the pre-autonomous function.
   pre_auton();
   // Prevent main from exiting with an infinite loop.
-  while (1) 
-  {
-    vex::task::sleep(100); // Sleep the task for a short amount of time to prevent wasted resources.
+  while (1) {
+    vex::task::sleep(100); // Sleep the task for a short amount of time to
+                           // prevent wasted resources.
   }
 }
