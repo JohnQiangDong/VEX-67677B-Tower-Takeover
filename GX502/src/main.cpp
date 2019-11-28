@@ -110,7 +110,7 @@ void autonomous() {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  auto_rd();
+ 
 
   while (true) {
     moving();
