@@ -126,4 +126,5 @@ bool isChsStop()
 {
   return fabs(getChsVlc_Left()) + fabs(getChsVlc_Right()) < 10;
 }
+
 #endif
