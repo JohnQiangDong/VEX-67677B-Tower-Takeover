@@ -34,9 +34,9 @@ void pre_auton(void)
 {
   while(true)
   {
-    bk_count = 10;
     if(bumper_choose) // 按下
     {
+      bk_count = 10;
       while(bumper_choose) // 按着未松开
       {
         if(--bk_count <= 0) 
