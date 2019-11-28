@@ -32,7 +32,7 @@ bool bk_flag = true;
 
 void pre_auton(void)
 {
-  while(true)
+/*  while(true)
   {
     if(bumper_choose) // 按下
     {
@@ -67,61 +67,61 @@ void pre_auton(void)
       }
     }
     task::sleep(50);
+  }*/
+
+
+  while (bk_flag)
+  {
+    bk_count = 10;
+    bk_flag = true;
+
+    if (bumper_choose)
+    {
+      choose = choose % 4 + 1;
+      switch (choose)
+      {
+      case 1:
+        Brain.Screen.printAt(10, 200, "Blue-Single       ");
+        break;
+      case 2:
+        Brain.Screen.printAt(10, 200, "Red-Single        ");
+        break;
+      case 3:
+        Brain.Screen.printAt(10, 200, "Red-Double        ");
+        break;
+      case 4:
+        Brain.Screen.printAt(10, 200, "Blue-Double       ");
+        break;
+      }
+    }
+
+    while (bumper_choose)
+    {
+      if (bk_count-- <= 0)
+      {
+        switch (--choose)
+        {
+        case 1:
+          Brain.Screen.printAt(10, 200, "Blue-Single     ");
+          break;
+        case 2:
+          Brain.Screen.printAt(10, 200, "Red-Single      ");
+          break;
+        case 3:
+          Brain.Screen.printAt(10, 200, "Red-Double      ");
+          break;
+        case 4:
+          Brain.Screen.printAt(10, 200, "Blue-Double     ");
+          break;
+        }
+        Brain.Screen.printAt(10, 220, "Break             ");
+        bk_flag = false;
+        break;
+      }
+      task::sleep(100);
+    }
+    task::sleep(100);
   }
-
-
-  // while (bk_flag)
-  // {
-  //   bk_count = 10;
-  //   bk_flag = true;
-
-  //   if (bumper_choose)
-  //   {
-  //     choose = choose % 4 + 1;
-  //     switch (choose)
-  //     {
-  //     case 1:
-  //       Brain.Screen.printAt(10, 200, "Blue-Single       ");
-  //       break;
-  //     case 2:
-  //       Brain.Screen.printAt(10, 200, "Red-Single        ");
-  //       break;
-  //     case 3:
-  //       Brain.Screen.printAt(10, 200, "Red-Double        ");
-  //       break;
-  //     case 4:
-  //       Brain.Screen.printAt(10, 200, "Blue-Double       ");
-  //       break;
-  //     }
-  //   }
-
-  //   while (bumper_choose)
-  //   {
-  //     if (bk_count-- <= 0)
-  //     {
-  //       switch (--choose)
-  //       {
-  //       case 1:
-  //         Brain.Screen.printAt(10, 200, "Blue-Single     ");
-  //         break;
-  //       case 2:
-  //         Brain.Screen.printAt(10, 200, "Red-Single      ");
-  //         break;
-  //       case 3:
-  //         Brain.Screen.printAt(10, 200, "Red-Double      ");
-  //         break;
-  //       case 4:
-  //         Brain.Screen.printAt(10, 200, "Blue-Double     ");
-  //         break;
-  //       }
-  //       Brain.Screen.printAt(10, 220, "Break             ");
-  //       bk_flag = false;
-  //       break;
-  //     }
-  //     task::sleep(100);
-  //   }
-  //   task::sleep(100);
-  // }
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -158,17 +158,10 @@ void autonomous()
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD
-void usercontrol(void) {
- 
-
-  while (true) {
-=======
 void usercontrol(void)
 {
   while (true)
   {
->>>>>>> 0b6818c94b18f07fa6d37b2b6f4d41bec5a52780
     moving();
     handing();
     pushing();
