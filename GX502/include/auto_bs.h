@@ -230,14 +230,14 @@ void bs_six(){
   moveTarget(555, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
   moveTarget(44,100,false, brakeType::brake,3,0.01,0.2);
-  moveTarget(182,90,true, brakeType::hold,0.3,0.01,0.3);
+  moveTarget(175,90,true, brakeType::hold,0.3,0.01,0.3);
 
   gyro_1.startCalibration();
   while(gyro_1.isCalibrating());
 
   handsStop(brakeType::hold,0.2);
   //moveTarget(-310,70,false,hold,0.2,0.01,3);
-  turnTarget(-150, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  turnTarget(-155, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
   task CubePosition(cube_position_bs);
   task::sleep(500);
   //start pushing during moving towards scoring area   
@@ -247,8 +247,8 @@ void bs_six(){
   // slow start moving
   chsSpin(6000, 6000);
   task::sleep(300);
-  moveTarget_LR(570, 280, 90, brakeType::coast, 0.3, 0.01, 0.3);//355,295
-  moveTarget_LR(340, 270, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  moveTarget_LR(570, 300, 90, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(340, 290, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
   chsSpin(4000, 2000);
   task::sleep(500);
   chsSpin(2000, 4000);

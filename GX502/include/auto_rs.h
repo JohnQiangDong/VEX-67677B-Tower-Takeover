@@ -31,7 +31,7 @@ int push_in_auto_rs() // > 3s
   double t = Brain.timer(vex::timeUnits::msec);
   
   while (push_flag && (Brain.timer(vex::timeUnits::msec) - t) < 3500) { // 2-3s
-    push_err = 800 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
+    push_err = 810 - fabs(push.rotation(rotationUnits::deg));//target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
     // pushing multi-layer control
     if (push_err < 10) // break
@@ -147,7 +147,7 @@ void auto_rs(){
   while(gyro_1.isCalibrating());
 
   handsStop(brakeType::hold,0.2);
-  turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 140 deg
+  turnTarget(145, 100, brakeType::brake, 5, 0.1, 0.1); // 140 deg
   task CubePosition(cube_position_rs);
   task::sleep(500);
   //start pushing during moving towards scoring area   
@@ -157,8 +157,8 @@ void auto_rs(){
   // slow start moving
   chsSpin(6000, 6000);
   task::sleep(300);
-  moveTarget_LR(300, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
-  moveTarget_LR(240, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  moveTarget_LR(320, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(260, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
   chsSpin(4000, 2000);
   task::sleep(500);
   chsSpin(2000, 4000);
@@ -190,10 +190,10 @@ void rs_six(){
   chsSpin(6000, 6000);
   task::sleep(200);//200
   moveTarget(165, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
-  moveTarget(555, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  moveTarget(565, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
   moveTarget(-54,100,false, brakeType::brake,3,0.01,0.2);
-  moveTarget(175,90,true, brakeType::hold,0.3,0.01,0.3);
+  moveTarget(180,90,true, brakeType::hold,0.3,0.01,0.3);
 
   gyro_1.startCalibration();
   while(gyro_1.isCalibrating());
@@ -210,8 +210,8 @@ void rs_six(){
   // slow start moving
   chsSpin(6000, 6000);
   task::sleep(300);
-  moveTarget_LR(360, 510, 90, brakeType::coast, 0.3, 0.01, 0.3);//355,295
-  moveTarget_LR(280, 340, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  moveTarget_LR(350, 510, 90, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(270, 340, 50, brakeType::coast, 0.2, 0.01, 0.3);//355,255
   chsSpin(4000, 2000);
   task::sleep(500);
   chsSpin(2000, 4000);
@@ -226,6 +226,8 @@ void rs_six(){
 
     task::sleep(50);
   }
+    task::sleep(700);
+
   moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
 }
 #endif
