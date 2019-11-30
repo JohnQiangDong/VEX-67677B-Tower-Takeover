@@ -106,14 +106,14 @@ int push_up_bs()
 void auto_bs(){
 
   // hold the position of arm and push
-  task ArmPushStart(start_arm_push_bs);
+  task ArmPushStart(start_arm_push_bs);/*
   moveTarget(220, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   // start the robot and sprawl
   task HandStartBS(start_hand_bs);
   moveTarget(-240,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); //back to reduce error
   // move forward get pre-loaded cube and 3 other cubes
   
-  task PushUpBS(push_up_bs);
+  task PushUpBS(push_up_bs);*/
   moveTarget(870,35,true,vex::brakeType::brake,0.3, 0.01, 0.3);
   vex::task::sleep(500);  
   handsStop(brakeType::hold, 0.1);

@@ -135,7 +135,6 @@ void pre_auton(void)
 
 void autonomous()
 {
-  auto_bd();
   switch (choose)
   {
   case 1:
