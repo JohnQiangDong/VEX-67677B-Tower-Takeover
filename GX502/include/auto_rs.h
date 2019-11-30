@@ -190,9 +190,9 @@ void rs_six(){
   chsSpin(6000, 6000);
   task::sleep(200);//200
   moveTarget(165, 100, true, vex::brakeType::coast, 0.3, 0.01, 0.3);
-  moveTarget(565, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  moveTarget(545, 26, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   //turn left and collect 1 cube (optional)
-  moveTarget(-54,100,false, brakeType::brake,3,0.01,0.2);
+  moveTarget(-50,100,false, brakeType::brake,3,0.01,0.2);
   moveTarget(180,90,true, brakeType::hold,0.3,0.01,0.3);
 
   gyro_1.startCalibration();

@@ -77,7 +77,7 @@ void pre_auton(void)
 
     if (bumper_choose)
     {
-      choose = choose % 4 + 1;
+      choose = choose % 5 + 1;
       switch (choose)
       {
       case 1:
@@ -135,6 +135,7 @@ void pre_auton(void)
 
 void autonomous()
 {
+  auto_bd();
   switch (choose)
   {
   case 1:

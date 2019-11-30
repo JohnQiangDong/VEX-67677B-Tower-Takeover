@@ -237,7 +237,7 @@ void bs_six(){
 
   handsStop(brakeType::hold,0.2);
   //moveTarget(-310,70,false,hold,0.2,0.01,3);
-  turnTarget(-155, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  turnTarget(-150, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
   task CubePosition(cube_position_bs);
   task::sleep(500);
   //start pushing during moving towards scoring area   

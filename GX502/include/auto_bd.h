@@ -98,11 +98,11 @@ int start_arm_push_bd()
 
 int push_up_bd()
 {
-  task::sleep(300);
+  task::sleep(1550);
   motorSpin(push, vex::directionType::fwd, 100, 2.2);
-  vex::task::sleep(300);
+  vex::task::sleep(400);
   motorSpin(push, vex::directionType::rev, 100, 2.2);
-  vex::task::sleep(600);
+  vex::task::sleep(650);
   motorStop(push, brakeType::hold, 0.1);
   return 0;
 }
@@ -113,33 +113,33 @@ void auto_bd(){
   //moveTarget(250, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3); // tar, max_pct, fwd_tur, bt, kp, kd, ki
   // start the robot and sprawl
   task HandStartBS(start_hand_bd);
-  moveTarget(-20,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
+  task PushUpBD(push_up_bd);
+ // //moveTarget(-20,100, true, vex::brakeType::brake, 0.3, 0.01, 0.3);
   gyro_1.startCalibration();
   while(gyro_1.isCalibrating());
-  task::sleep(200);//200
+  task::sleep(2000);//200
   //move forward 800
-  task PushUpBD(push_up_bd);
   chsSpin(6000, 6000);
   task::sleep(200);//200
   handsStop(brakeType::coast,0.1);
-  moveTarget(475, 100, true, vex::brakeType::brake, 0.3, 0.01, 0.3);//467
+  moveTarget(465, 80, true, vex::brakeType::brake, 0.3, 0.01, 0.3);//467
   //turn right 35
-  turnTarget(39,63,brake,4,0.3,0.2);//37
+  turnTarget(34,63,brake,4,0.3,0.5);//37
   //collecter start turn
   task StartHandBD(start_hand_bd);
   //slow accelerate forward
-  moveTarget(200,60, true, brakeType::coast, 0.1, 0.03, 0.1);
+  moveTarget(200,60, true, brakeType::coast, 0.2, 0.03, 0.1);//0.1
   handsStop(brakeType::coast,0.1);
   task PushUpBD2(push_up_bd); 
   vexDelay(300);
   handsSpin(vex::directionType::fwd, 100,2.2);
-  //moveTarget(100, 60, true, brakeType::brake, 0.3,0.01, 0.3);
+
   handsSpin(vex::directionType::fwd, 100,2.2);
-  //moveTarget(160, 70, true, brakeType::brake, 3,0.01, 0.3);
+
   moveTarget_LR(190, 255, 60, brakeType::brake, 0.2, 0.01, 0.3);//355,255
   task CubePrevenStuck (cube_prevent_stuck);
   //turn right 135 
-  turnTarget(100, 100, vex::brakeType::brake, 3, 0.3,0.1);//150
+  turnTarget(103, 100, vex::brakeType::brake, 3, 0.3,0.1);//150
   push_flag = true;
   push_hold = true;
   task CubePositionBD(cube_position_bd);
@@ -148,7 +148,7 @@ void auto_bd(){
 
 
   moveTarget_LR(130, 330, 100, brakeType::coast, 0.5, 0.1, 0.3);//355,255  
-  chsSpin(4000, 2000);
+  chsSpin(3500, 1700);
   task::sleep(700);
   chsStops(brakeType::coast, 0.2);
   task::sleep(300);

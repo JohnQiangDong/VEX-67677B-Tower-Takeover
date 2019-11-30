@@ -177,8 +177,6 @@ int autoPush() {
     } else // 100 fast push
     {
       output = 100;
-      if(push_err > 700)
-      handsSpin(vex::directionType::fwd, 80,1.6 );
     }
     Brain.Screen.printAt(10, 10, "output is %.2f", push_err);
     motorSpin(push, vex::directionType::fwd, output, 2.2);
