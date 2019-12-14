@@ -147,7 +147,7 @@ void auto_rs(){
   while(gyro_1.isCalibrating());
 
   handsStop(brakeType::hold,0.2);
-  turnTarget(145, 100, brakeType::brake, 5, 0.1, 0.1); // 140 deg
+  turnTarget(140, 100, brakeType::brake, 5, 0.1, 0.1); // 140 deg
   task CubePosition(cube_position_rs);
   task::sleep(500);
   //start pushing during moving towards scoring area   
@@ -157,8 +157,8 @@ void auto_rs(){
   // slow start moving
   chsSpin(6000, 6000);
   task::sleep(300);
-  moveTarget_LR(320, 410, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
-  moveTarget_LR(260, 350, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
+  moveTarget_LR(320, 400, 100, brakeType::coast, 0.3, 0.01, 0.3);//355,295
+  moveTarget_LR(260, 345, 60, brakeType::coast, 0.2, 0.01, 0.3);//355,255
   chsSpin(4000, 2000);
   task::sleep(500);
   chsSpin(2000, 4000);
@@ -200,7 +200,7 @@ void rs_six(){
 
   handsStop(brakeType::hold,0.2);
   //moveTarget(-310,70,false,hold,0.2,0.01,3);
-  turnTarget(150, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
+  turnTarget(143, 100, brakeType::brake, 5, 0.1, 0.1); // 200 deg
   task CubePosition(cube_position_rs);
   task::sleep(500);
   //start pushing during moving towards scoring area   
@@ -229,5 +229,8 @@ void rs_six(){
     task::sleep(700);
 
   moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
+  motorSpin(push,vex::directionType::rev,100,1.6);
+  vex::task::sleep(1000);
+  motorStop(push,brakeType::hold,0.2);
 }
 #endif

@@ -117,7 +117,7 @@ void rasing() {
     push_hold = false;
     motorSpin(arm, directionType::rev, 80, 1.6);
     if (fabs(arm.rotation(rotationUnits::deg))<400){
-      motorSpin(push, vex::directionType::rev, 77, 1.2);
+      motorSpin(push, vex::directionType::rev, 90, 1.2);
     }
     //cancle out erro(fabs<20) in rotation
     if (fabs(arm.rotation(rotationUnits::deg)) <

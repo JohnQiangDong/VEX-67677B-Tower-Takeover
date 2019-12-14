@@ -264,6 +264,9 @@ void bs_six(){
     task::sleep(50);
   }
   moveTarget(-300, 60, true, brakeType::brake, 0.05, 0.01, 0.7);
+    motorSpin(push,vex::directionType::rev,100,1.6);
+  vex::task::sleep(1000);
+  motorStop(push,brakeType::hold,0.2);
 }
 
 #endif
