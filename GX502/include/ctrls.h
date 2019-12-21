@@ -19,7 +19,7 @@ void moveCtrl(int c3, int c1) {
   if (abs(c3) < 10)
     c3 = 0;
   // rotate speed protecting
-  ftr = abs(c1) > 60 ? 0.8 : 0.5;
+  ftr = abs(c1) > 60 ? 0.8 : 0.4;
 
   lv = c3 + c1 * ftr;
   rv = c3 - c1 * ftr;
@@ -36,7 +36,14 @@ void moveCtrl(int c3, int c1) {
 
   olv = getChsVlc_Left();
   orv = getChsVlc_Right();
-
+  /*if (!c3 && c1 == 0 && fabs(olv) < 7 && fabs(orv) < 7 ){
+    chsStops(vex::brakeType::brake, 0.2);
+    return;
+  }
+  else if (c3 == 0 && !c1 && fabs(olv) < 7 && fabs(orv) < 7 ) {
+    chsStops(vex::brakeType::coast, 0.2);
+    return;
+  }*/
   if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7) {
     chsStops(vex::brakeType::coast, 0.2);
     return;
