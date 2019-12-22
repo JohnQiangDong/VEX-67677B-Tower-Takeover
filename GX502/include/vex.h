@@ -21,7 +21,7 @@ vex::motor right_1(vex::PORT14, vex::gearSetting::ratio18_1, false);
 vex::motor right_2(vex::PORT12, vex::gearSetting::ratio18_1, true);
 vex::motor left_1(vex::PORT13, vex::gearSetting::ratio18_1, true);
 vex::motor left_2(vex::PORT11, vex::gearSetting::ratio18_1, false);
-vex::motor arm(vex::PORT1, vex::gearSetting::ratio36_1, false);
+vex::motor arm(vex::PORT4, vex::gearSetting::ratio36_1, false);
 vex::motor hand1(vex::PORT17, vex::gearSetting::ratio36_1, true);
 vex::motor hand2(vex::PORT3, vex::gearSetting::ratio36_1, false);
 vex::motor push(vex::PORT2, vex::gearSetting::ratio36_1, true);

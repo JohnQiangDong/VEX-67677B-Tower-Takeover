@@ -11,7 +11,7 @@
 /*----------------------------------------------------------------------------*/
 
 double lv, rv, ftr, k, olv, orv;
-
+bool turn_flag = true;
 void moveCtrl(int c3, int c1) {
   // channel mis-touch preventing
   if (abs(c1) < 10)
@@ -36,16 +36,12 @@ void moveCtrl(int c3, int c1) {
 
   olv = getChsVlc_Left();
   orv = getChsVlc_Right();
-  /*if (!c3 && c1 == 0 && fabs(olv) < 7 && fabs(orv) < 7 ){
-    chsStops(vex::brakeType::brake, 0.2);
-    return;
-  }
-  else if (c3 == 0 && !c1 && fabs(olv) < 7 && fabs(orv) < 7 ) {
-    chsStops(vex::brakeType::coast, 0.2);
-    return;
-  }*/
+  if(!turn_flag) chsSetBT(brakeType::coast);
+  else chsSetBT(brakeType::brake);
   if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7) {
-    chsStops(vex::brakeType::coast, 0.2);
+    if(!turn_flag)
+    {chsStops(vex::brakeType::coast, 0.2);}
+    else {chsStops(vex::brakeType::brake, 0.4);}
     return;
   } else if (lv * olv < 0 && rv * orv < 0) // both change direction
   {
@@ -65,6 +61,8 @@ void moveCtrl(int c3, int c1) {
     else
       k = 1;
   }
+  if(c1 == 0 && c3!= 0)turn_flag = false;
+  else if (c1 != 0 && c3 == 0)turn_flag = true;
 
   chsSpin(130 * (k * lv + (1 - k) * olv), 130 * (k * rv + (1 - k) * orv));
 }
@@ -103,7 +101,7 @@ void handing() {
     push_hold = false;
     handsSpin(vex::directionType::rev, 80, 1.6);
   } else if (!push_hold) {
-    handsStop(vex::brakeType::hold, 0.1);
+    handsStop(vex::brakeType::brake, 0.1);
   }
 }
 
@@ -124,7 +122,7 @@ void rasing() {
     push_hold = false;
     motorSpin(arm, directionType::rev, 80, 1.6);
     if (fabs(arm.rotation(rotationUnits::deg))<400){
-      motorSpin(push, vex::directionType::rev, 90, 1.2);
+      motorSpin(push, vex::directionType::rev, 100, 1.8);
     }
     //cancle out erro(fabs<20) in rotation
     if (fabs(arm.rotation(rotationUnits::deg)) <
