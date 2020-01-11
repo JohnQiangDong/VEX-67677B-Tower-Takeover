@@ -60,6 +60,18 @@ void chsSpin(double left_vot, double right_vot, double mt = 2.2)
   right_2.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
 }
 
+void chshor_move(double left_vot,double right_vot, double mt = 2.2)
+{
+  left_1.setMaxTorque(mt, currentUnits::amp);
+  left_2.setMaxTorque(mt, currentUnits::amp);
+  right_1.setMaxTorque(mt, currentUnits::amp);
+  right_2.setMaxTorque(mt, currentUnits::amp);
+  left_1.spin(vex::directionType::fwd, left_vot, vex::voltageUnits::mV);
+  left_2.spin(vex::directionType::fwd, right_vot, vex::voltageUnits::mV);
+  right_1.spin(vex::directionType::rev, left_vot, vex::voltageUnits::mV);
+  right_2.spin(vex::directionType::rev, right_vot, vex::voltageUnits::mV);
+}
+
 /*----------------------------------------------------------------------------*/
 /*   Hands Control
 /*----------------------------------------------------------------------------*/

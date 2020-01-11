@@ -79,12 +79,14 @@ void moving() {
   else if (btn_fwd)
     chsSpin(smove_vot, smove_vot);
   else if (btn_right)
-    chsSpin(1.5 * smove_vot, -1.5 * smove_vot);
+    chshor_move(10000, -10000);
   else if (btn_left)
-    chsSpin(-1.5 * smove_vot, 1.5 * smove_vot);
+    chshor_move(-10000,10000);
   else
     moveCtrl(c_fwd, c_tur);
 }
+
+
 
 /*----------------------------------------------------------------------------*/
 /*   Collector Control
