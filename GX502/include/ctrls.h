@@ -36,12 +36,16 @@ void moveCtrl(int c3, int c1) {
 
   olv = getChsVlc_Left();
   orv = getChsVlc_Right();
-  if(!turn_flag) chsSetBT(brakeType::coast);
-  else chsSetBT(brakeType::brake);
+  if (!turn_flag)
+    chsSetBT(brakeType::coast);
+  else
+    chsSetBT(brakeType::brake);
   if (!lv && !rv && fabs(olv) < 7 && fabs(orv) < 7) {
-    if(!turn_flag)
-    {chsStops(vex::brakeType::coast, 0.2);}
-    else {chsStops(vex::brakeType::brake, 0.4);}
+    if (!turn_flag) {
+      chsStops(vex::brakeType::coast, 0.2);
+    } else {
+      chsStops(vex::brakeType::brake, 0.4);
+    }
     return;
   } else if (lv * olv < 0 && rv * orv < 0) // both change direction
   {
@@ -61,8 +65,10 @@ void moveCtrl(int c3, int c1) {
     else
       k = 1;
   }
-  if(c1 == 0 && c3!= 0)turn_flag = false;
-  else if (c1 != 0 && c3 == 0)turn_flag = true;
+  if (c1 == 0 && c3 != 0)
+    turn_flag = false;
+  else if (c1 != 0 && c3 == 0)
+    turn_flag = true;
 
   chsSpin(130 * (k * lv + (1 - k) * olv), 130 * (k * rv + (1 - k) * orv));
 }
@@ -81,28 +87,36 @@ void moving() {
   else if (btn_right)
     chshor_move(10000, -10000);
   else if (btn_left)
-    chshor_move(-10000,10000);
+    chshor_move(-10000, 10000);
   else
     moveCtrl(c_fwd, c_tur);
 }
-
-
 
 /*----------------------------------------------------------------------------*/
 /*   Collector Control
 /*----------------------------------------------------------------------------*/
 bool push_flag = false, push_hold = false;
-bool push_down=false ;
+bool push_down = false, hand_hold = false;
+
+int cube_position(){
+  handsSpin(vex::directionType::rev,100,2.2);
+  vex::task::sleep(1000);
+  hand_hold = true;
+  return 0;
+}
+
 double push_err = 0, push_vlc = 0, sum_err = 0, output = 0;
 
 void handing() {
   if (btn_hand_in) {
     push_hold = false;
+    hand_hold = true;
     handsSpin(vex::directionType::fwd, 80, 1.6);
   } else if (btn_hand_ot) {
+    hand_hold = true;
     push_hold = false;
     handsSpin(vex::directionType::rev, 80, 1.6);
-  } else if (!push_hold) {
+  } else if (!push_hold and hand_hold) {
     handsStop(vex::brakeType::brake, 0.1);
   }
 }
@@ -110,33 +124,56 @@ void handing() {
 /*----------------------------------------------------------------------------*/
 /*   Arm Control
 /*----------------------------------------------------------------------------*/
+bool arm_hold = false;
 void rasing() {
   if (btn_arm_up) {
     push_hold = false;
+    arm_hold = true;
+    if (!hand_hold and fabs(arm.rotation(rotationUnits::deg))<30){
+      handsSpin(vex::directionType::rev,60,1.6); 
+    }
+    else{
+      hand_hold = true;
+    }
     motorSpin(arm, vex::directionType::fwd, 80, 2.4);
     if (fabs(push.rotation(rotationUnits::deg)) <
-        300) // TODO: wating for testing.
-      motorSpin(push, vex::directionType::fwd, 60, 2.4);
-    else {
+        250) // TODO: wating for testing.
+    {
+        if (fabs(arm.rotation(rotationUnits::deg))>25)
+          motorSpin(push, vex::directionType::fwd, 60, 2.4);
+    } else {
       motorStop(push, vex::brakeType::hold, 0.2);
     }
-  } else if (btn_arm_dw) {
+  } else if (btn_arm_dw){
     push_hold = false;
-    motorSpin(arm, directionType::rev, 80, 1.6);
-    if (fabs(arm.rotation(rotationUnits::deg))<400){
+    arm_hold = true;
+    hand_hold = false;
+    motorSpin(arm, directionType::rev, 100, 2.2);
+    if (fabs(arm.rotation(rotationUnits::deg)) < 400) {
       motorSpin(push, vex::directionType::rev, 100, 1.8);
     }
-    //cancle out erro(fabs<20) in rotation
-    if (fabs(arm.rotation(rotationUnits::deg)) <
+    // cancle out erro(fabs<20) in rotation
+    /*if (fabs(arm.rotation(rotationUnits::deg)) <
         16) {
           arm.resetRotation();
         }
         if (fabs(push.rotation(rotationUnits::deg)) <
         20) {
           push.resetRotation();
-        }
+        }*/
+
   } else if (!push_hold) {
-    motorStop(arm, brakeType::hold, 0.1);
+    if (!arm_hold) {
+      motorSpin(arm, directionType::rev, 20, 1.6);
+    }
+    if (arm_hold) {
+      motorStop(arm, brakeType::hold, 0.2);
+    }
+    //if(arm.velocity(percentUnits::pct) == 0) hand_hold = true;
+  }
+  if (armstop and !btn_arm_dw) {
+    arm_hold = false;
+    arm.resetRotation();
   }
 }
 
@@ -162,7 +199,7 @@ void rasing() {
 int autoPush() {
   while (push_flag) {
     push_err =
-        800 -
+        790 -
         fabs(push.rotation(rotationUnits::deg)); // target is 800 for 67677b
     push_vlc = fabs(push.velocity(vex::velocityUnits::pct));
 
@@ -251,7 +288,8 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt,
     cof = -1;
   }
 
-  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
+  if (bt == brakeType::coast)
+    chsSetBT(brakeType::coast);
 
   PID pid = PID(0.05, ma, mi, kp, kd, ki);
   resetChsRot();
@@ -275,7 +313,8 @@ void moveTarget(int tar, int max_pct, bool fwd_tur, vex::brakeType bt,
     vex::task::sleep(50);
   }
 
-  if (bt == brakeType::coast) return;
+  if (bt == brakeType::coast)
+    return;
 
   chsStop(bt);
   while (!isChsStop())
@@ -300,7 +339,8 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt,
     cof = -1;
   }
 
-  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
+  if (bt == brakeType::coast)
+    chsSetBT(brakeType::coast);
 
   PID pid_l = PID(0.05, ma, mi, kp, kd, ki);
   PID pid_r = PID(0.05, ma, mi, kp, kd, ki);
@@ -331,9 +371,10 @@ void moveTarget_LR(int tar_l, int tar_r, int max_pct, vex::brakeType bt,
     task::sleep(10);
 }
 
-void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, double kp, double kd, double ki) 
-{
-  if (tar_l * tar_r < 0) return; // tar_l and tar_r must be in same driection.
+void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt,
+                       double kp, double kd, double ki) {
+  if (tar_l * tar_r < 0)
+    return; // tar_l and tar_r must be in same driection.
   int ma = max_pct, mi = 0, cof = 1, count = 20, tar = fmax(tar_l, tar_r);
   if (tar_l < 0 && tar_r < 0) {
     ma = 0;
@@ -342,18 +383,19 @@ void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, dou
     tar = fmin(tar_l, tar_r);
   }
 
-  if (bt == brakeType::coast) chsSetBT(brakeType::coast);
+  if (bt == brakeType::coast)
+    chsSetBT(brakeType::coast);
 
   PID pid = PID(0.05, ma, mi, kp, kd, ki);
   resetChsRot();
 
-  if (tar == tar_l) 
-  {
-    while (cof * (tar - getChsRot_Left()) > 20) 
-    {
+  if (tar == tar_l) {
+    while (cof * (tar - getChsRot_Left()) > 20) {
       if (isChsStop()) {
-        if (count-- <= 0) break;
-      } else count = 20;
+        if (count-- <= 0)
+          break;
+      } else
+        count = 20;
 
       double output = 130 * pid.calculate(tar, getChsRot_Left());
 
@@ -361,14 +403,13 @@ void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, dou
 
       vex::task::sleep(50);
     }
-  } 
-  else
-  {
-    while (cof * (tar - getChsRot_Right()) > 20) 
-    {
+  } else {
+    while (cof * (tar - getChsRot_Right()) > 20) {
       if (isChsStop()) {
-        if (count-- <= 0) break;
-      } else count = 20;
+        if (count-- <= 0)
+          break;
+      } else
+        count = 20;
 
       double output = 130 * pid.calculate(tar, getChsRot_Right());
 
@@ -378,9 +419,11 @@ void moveTarget_LR_PCT(int tar_l, int tar_r, int max_pct, vex::brakeType bt, dou
     }
   }
 
-  if (bt == brakeType::coast) return;
+  if (bt == brakeType::coast)
+    return;
   chsStop(bt);
-  while (!isChsStop()) task::sleep(10);
+  while (!isChsStop())
+    task::sleep(10);
 }
 
 /*----------------------------------------------------------------------------*/
