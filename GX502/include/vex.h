@@ -42,7 +42,7 @@ vex::motor left_1(vex::PORT1, vex::gearSetting::ratio18_1, true);
 vex::motor left_2(vex::PORT4, vex::gearSetting::ratio18_1, false);
 vex::motor arm(vex::PORT15, vex::gearSetting::ratio36_1, false);
 vex::motor hand1(vex::PORT12, vex::gearSetting::ratio36_1, false);
-vex::motor hand2(vex::PORT7, vex::gearSetting::ratio36_1, true);
+vex::motor hand2(vex::PORT6, vex::gearSetting::ratio36_1, true);
 vex::motor push(vex::PORT9, vex::gearSetting::ratio36_1, true);
 
 vex::bumper armbumper = vex::bumper(Brain.ThreeWirePort.F);
