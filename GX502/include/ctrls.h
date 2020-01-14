@@ -50,18 +50,18 @@ void moveCtrl(int c3, int c1) {
   } else if (lv * olv < 0 && rv * orv < 0) // both change direction
   {
     if (fabs(lv - olv) > 50 && fabs(rv - orv) > 50)
-      k = 0.18;
+      k = 0.25;
     else
-      k = 0.5;
+      k = 0.6;
   } else if (lv * olv < 0 || rv * orv < 0) // either change direction
   {
     if (fabs(lv - olv) > 50 || fabs(rv - orv) > 50)
-      k = 0.5;
+      k = 0.7;
     else
       k = 0.8;
   } else {
     if (fabs(lv - olv) > 50 && fabs(rv - orv) > 50)
-      k = 0.8;
+      k = 0.9;
     else
       k = 1;
   }
@@ -70,7 +70,7 @@ void moveCtrl(int c3, int c1) {
   else if (c1 != 0 && c3 == 0)
     turn_flag = true;
 
-  chsSpin(130 * (k * lv + (1 - k) * olv), 130 * (k * rv + (1 - k) * orv));
+  chsSpin(135 * (k * lv + (1 - k) * olv), 130 * (k * rv + (1 - k) * orv));
 }
 
 /*----------------------------------------------------------------------------*/
