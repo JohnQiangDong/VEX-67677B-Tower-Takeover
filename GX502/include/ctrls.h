@@ -164,10 +164,10 @@ void rasing() {
 
   } else if (!push_hold) {
     if (!arm_hold) {
-      motorSpin(arm, directionType::rev, 20, 1.6);
+      motorSpin(arm, directionType::rev, 30, 1.6);
     }
     if (arm_hold) {
-      motorStop(arm, brakeType::hold, 0.2);
+      motorStop(arm, brakeType::hold, 0.3);
     }
     //if(arm.velocity(percentUnits::pct) == 0) hand_hold = true;
   }
