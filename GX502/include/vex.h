@@ -83,4 +83,19 @@ vex::controller ctrler = vex::controller();
 #define armstop armbumper.pressing()
 #define pushstop pushlimit.pressing()
 
+/*----------------------------------------------------------------------------*/
+/*   Definition For AUTO
+/*----------------------------------------------------------------------------*/
+
+#define Gyro1 gyro_1
+#define LeftMotor1 left_1
+#define LeftMotor2 left_2
+#define RightMotor1 right_1
+#define RightMotor2 right_2
+#define RotateMotor push
+#define LeftRollerMotor hand1
+#define RightRollerMotor hand2
+#define LiftMotor arm
+#define Lift_Bumper armbumper
+
 #endif
